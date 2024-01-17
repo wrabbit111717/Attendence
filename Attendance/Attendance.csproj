@@ -1,0 +1,101 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+	  <SpaRoot>ClientApp\</SpaRoot>
+	  <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+<ItemGroup>
+	<!-- Don't publish the SPA source files, but do show them in the project files list -->
+	<Content Remove="$(SpaRoot)**" />
+	<EmbeddedResource Remove="$(SpaRoot)**" />
+	<None Remove="$(SpaRoot)**" />
+	<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+</ItemGroup>
+
+<Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+	<!-- Ensure Node.js is installed -->
+	<Exec Command="node --version" ContinueOnError="true">
+		<Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+	</Exec>
+	<Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+	<Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+	<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+</Target>
+
+	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
+
+		<!-- Include the newly-built files in the publish output -->
+		<!--<ItemGroup>
+			<DistFiles Include="$(SpaRoot)build\**" />
+			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+				<RelativePath>%(DistFiles.Identity)</RelativePath>
+				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+				<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			</ResolvedFileToPublish>
+		</ItemGroup>-->
+	</Target>
+
+  <ItemGroup>
+    <Content Include="Rotativa\**" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="sqlceme35.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sqlceqp35.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sqlcese35.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--<PackageReference Include="ClosedXML" Version="0.102.1" />-->
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.32" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.32" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="3.1.32" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.32" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.32" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.32" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.32" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.32">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.32" />
+    <PackageReference Include="Westwind.AspNetCore.LiveReload" Version="0.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Attendance.Infrastructure\Attendance.Infrastructure.csproj" />
+    <ProjectReference Include="..\Attendance.Models\Attendance.Models.csproj" />
+    <ProjectReference Include="..\Attendance.Services\Attendance.Services.csproj" />
+    <ProjectReference Include="..\Operations.Data\Operations.Data.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Watch Include="**\*.js;**\*.jsx;**\*.css;**\*.cshtml" Exclude="**\node_modules\**\*;**\*.*.map;obj\**\*;bin\**\*" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="Pages\Observation\Details.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Watch Remove="Pages\Observation\Details.cshtml" />
+	  <Watch Remove="wwwroot\css\attachment.css" />
+	  <Watch Remove="wwwroot\css\crewevaluation.css" />
+	  <Watch Remove="wwwroot\css\slider.css" />
+	  <Watch Remove="wwwroot\js\slider.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Pages\Observation\Details.cshtml" />
+	</ItemGroup>
+
+</Project>

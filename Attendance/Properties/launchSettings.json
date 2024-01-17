@@ -1,0 +1,18 @@
+{
+  "profiles": {
+    "Attendance": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH": "true",
+        "DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER": "false"
+      },
+      "launchUrl": "Briefcases/",
+      "applicationUrl": "http://localhost:5000",
+      "hotReloadEnabled": true,
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "hotReloadProfile": "aspnetcore"
+    }
+  }
+}

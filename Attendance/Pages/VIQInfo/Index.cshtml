@@ -1,0 +1,109 @@
+﻿@page
+@model Attendance.Pages.VIQInfo.IndexModel
+
+@{
+    ViewData["Title"] = "VIQInfo";
+    ViewData["Menu"] = "viqinfo";
+    ViewData["Step"] = "Home";
+}
+<div class="row justify-content-center align-items-center">
+    @if (TempData["message"] != null)
+    {
+        var alertType = "alert-info";
+
+        switch (Model.AlertType)
+        {
+            case Data.PageAlertType.Info:
+                alertType = "alert-info";
+                break;
+            case Data.PageAlertType.Success:
+                alertType = "alert-success";
+                break;
+            case Data.PageAlertType.Warning:
+                alertType = "alert-warning";
+                break;
+            case Data.PageAlertType.Danger:
+                alertType = "alert-danger";
+                break;
+            case Data.PageAlertType.Primary:
+                alertType = "alert-primary";
+                break;
+        }
+        <div class="alert @alertType mb-0" algin="center">
+            <strong>@TempData["result"]</strong> @TempData["message"]
+        </div>
+    }
+</div>
+
+<div class="container-fluid">
+<h1>VIQ</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.VIQInfoModel[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VIQInfoModel[0].Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VIQInfoModel[0].RegistrationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VIQInfoModel[0].NumOfQuestions)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.VIQInfoModel)
+        {
+            <tr>
+                <td class="app-td">
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td class="app-td">
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+                <td class="app-td">
+                    @Html.DisplayFor(modelItem => item.RegistrationDate)
+                </td>
+                <td class="app-td">
+                    @Html.DisplayFor(modelItem => item.NumOfQuestions)
+                </td>
+                <td class="app-td">
+                    <a asp-page="./Edit" asp-route-id="@item.QId"
+                       asp-route-pageIndex="@(Model.VIQInfoModel.PageIndex)">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.QId"
+                       asp-route-pageIndex="@(Model.VIQInfoModel.PageIndex)">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.QId"
+                       asp-route-pageIndex="@(Model.VIQInfoModel.PageIndex)">Delete</a> |
+
+                    <a asp-route-id="@item.QId" asp-page-handler="Duplicate"
+                       onclick = "return confirm('Are you sure want to duplicate this item?');">Duplicate</a> 
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.VIQInfoModel.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.VIQInfoModel.HasNextPage ? "disabled" : "";
+}
+
+<a asp-page="./Index"
+   asp-route-pageIndex="@(Model.VIQInfoModel.PageIndex - 1)"
+   class="btn btn-primary @prevDisabled">
+    Prev
+</a>
+<a asp-page="./Index"
+   asp-route-pageIndex="@(Model.VIQInfoModel.PageIndex + 1)"
+   class="btn btn-primary @nextDisabled">
+    Next
+</a>

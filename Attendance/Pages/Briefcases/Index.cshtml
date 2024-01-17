@@ -1,0 +1,24 @@
+﻿@page "{*path}"
+@model Attendance.Pages.Briefcases.IndexModel
+<div id="briefcases"></div>
+<environment include="Production">
+  @section Styles {
+    <link rel="stylesheet" asp-href-include="~/briefcases/**/*.css" />
+  } 
+  @section Scripts {
+     <script type="module" defer async asp-src-include="~/briefcases/**/*.js"></script>
+  }
+</environment>
+<environment include="Development">
+    @section Scripts {
+        <script type="module">
+            import RefreshRuntime from 'http://localhost:5173/@@react-refresh'
+            RefreshRuntime.injectIntoGlobalHook(window)
+            window.$RefreshReg$ = () => { }
+            window.$RefreshSig$ = () => (type) => type
+            window.__vite_plugin_react_preamble_installed__ = true
+        </script>
+        <script type="module" src="http://localhost:5173/@@vite/client"></script>
+        <script type="module" defer src="http://localhost:5173/src/main.jsx"></script>
+    }
+</environment>

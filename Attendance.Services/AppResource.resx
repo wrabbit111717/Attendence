@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SQL_Copy_Questionnaires" xml:space="preserve">
+    <value>INSERT INTO 
+	Vetting (VetId,ObjectId) 
+	(
+	SELECT 
+		@vetId  AS VetId
+		, vi.ObjectId 
+	FROM VIQ vi
+	LEFT JOIN Vetting vet ON vet.VETId = @vetId AND vet.ObjectId = vi.ObjectId
+	WHERE 
+        vet.VETId IS NULL
+        AND vi.Qid = @qId
+	)</value>
+  </data>
+  <data name="SQL_Create_Export_DB" xml:space="preserve">
+    <value>CREATE TABLE [Version]( [VersionCode] [nvarchar](1000) NOT NULL );
+CREATE TABLE [VisitLog]( [ValidFromDate] [datetime] ,[ValidToDate] [datetime] ,[LastDate] [datetime] ,[VisitNumberLimit] [int], [VettingNumberLimit] [int] ,[QuestionnaireLimit] [int] ,[VettingNumber] [int] ,[QuestionnaireNumber] [int] ,[VisitNumber] [int] ,[GuiFileId] [nvarchar](1024), [OriginalFileName] [nvarchar](1024) );
+CREATE TABLE [SMVetting]( [VETId] [int] NOT NULL, [ObjectId] [uniqueidentifier] NOT NULL, [answer] [nvarchar](5)  NULL, [significance] [nvarchar](5)  NULL, [comments] [nvarchar](4000) NULL, [WithAttachment] [bit] NULL );
+CREATE TABLE [SMQuestionnaire]( [QId] [int] NOT NULL, [ObjectId] [uniqueidentifier] NOT NULL, [ObjectType] [nvarchar](2) NOT NULL, [CategoryId] [uniqueidentifier] NULL, [ParentCategoryId] [uniqueidentifier] NULL, [GlobalDisplayIndex] [int] NOT NULL, [DisplayLevel] [int] NOT NULL, [Children] [int] NOT NULL, [ObjectDescription] [Nvarchar](4000) NOT NULL, [ObjectComments] [ntext] NULL, [DisplayCode] [nvarchar](64)  NULL, [DefaultCode] [nvarchar](64) NULL, [ParentId] [uniqueidentifier] NULL, [InternalDisplayCode] [nvarchar](64)  NULL );
+ALTER TABLE [SMQuestionnaire] ADD CONSTRAINT QUESTIONNAIRE_PK PRIMARY KEY ([Qid],[ObjectId]);
+CREATE TABLE [VIQInfo]([QId] [int]  PRIMARY KEY,[VIQGUI][uniqueidentifier] NULL ,[Title] [nvarchar](128)  NOT NULL,[Comments] ntext NULL,[Author] [nvarchar](256) NULL,[Finalized] [tinyint] NULL,[RegistrationDate] [datetime] NULL, [NumOfQuestions] [int] NULL  );
+ALTER TABLE [SMQuestionnaire] ADD CONSTRAINT QUESTIONNAIRE_FK FOREIGN KEY ([Qid]) REFERENCES VIQINFO (QID) ON DELETE CASCADE;
+CREATE TABLE [VettingInfo]( [VetId] [int] PRIMARY KEY,[QId] [int] ,[InspectorName] [Nvarchar](50) NULL,[InspectorSirName] [Nvarchar](50) NULL,[CompanyRepresentativeName] [Nvarchar](64) NOT NULL,[PortId] [int] NULL,[Port] [Nvarchar](64) NOT NULL,[CountryId] [int] NULL,[Country] [Nvarchar](64) NULL,[VetDate] [datetime] NOT NULL,[VetTime] [datetime] NULL,[Password] [Nvarchar](128) NULL,[Comments] [Nvarchar](4000) NULL,[VesselId] [int] NULL,[VesselName] [Nvarchar](64) NOT NULL,[VettingCode] [Nvarchar](64) NULL,[VetGUI] [uniqueidentifier] NULL,[InspectionTypeId] [int] NULL);
+ALTER TABLE [VettingInfo] ADD CONSTRAINT VettingInfo_FK FOREIGN KEY ([Qid]) REFERENCES VIQINFO (QID);
+ALTER TABLE [SMVetting] ADD CONSTRAINT Vetting_VettingInfo_FK FOREIGN KEY ([Vetid]) REFERENCES VETTINGINFO (VETID) ON DELETE CASCADE;
+CREATE TABLE [Vessel]( [VesselId] [int] PRIMARY KEY,[VesselName] [Nvarchar](64)NOT NULL,[IMO] [Nvarchar](32) NULL,[FLAG][Nvarchar](64) NULL,[DeliveryDate] [datetime] NULL,[GrossTonage] [float] NULL,[DeadWeight] [float]  NULL,[VesselCode][Nvarchar](64) NULL);
+CREATE TABLE [InspectionTypes]( [InspectionTypeId] [int] PRIMARY KEY,[InspectionType] [Nvarchar](64)NOT NULL,[InspectionCode] [Nvarchar](50) NULL);
+CREATE TABLE [Attachment]( [AttachmentId] [uniqueidentifier] PRIMARY KEY,[AttachmentFileName] [Nvarchar](64)NOT NULL,[AttachmentPath] [Nvarchar](2000)NOT NULL,[AttachmentType] [Nvarchar](64)NULL,[AttachmentFileExtension] [Nvarchar](8) NULL,[AttachmentSizeInBytes] [int] NULL);
+CREATE TABLE [ObjectAttachment]( [AttachmentId] [uniqueidentifier] not null,[ObjectId] [uniqueidentifier] NOT NULL,[VetId] [int] NOT NULL,[VetGui] [uniqueidentifier] NULL);
+ALTER TABLE [ObjectAttachment] ADD CONSTRAINT ObjectAttachment_UK  UNIQUE ([AttachmentId],[ObjectId],[VetId])
+CREATE TABLE [AttachmentInfo]( [MainPath] [NVarchar](4000) not null);
+CREATE TABLE [InspectionSource]( [SOURCENAME] [nvarchar](1000),[SOURCECODE] [nvarchar](1000),[INSPECTIONSOURCEID] [int],[typecode] [int]) ;
+CREATE TABLE [Users]( [UserId] [int],[UserName] [nvarchar](1000));</value>
+  </data>
+  <data name="SQL_Create_Init_User" xml:space="preserve">
+    <value>Insert into Users (UserId, UserName) values(1, @p0)</value>
+  </data>
+  <data name="SQL_Create_Init_VersionCode" xml:space="preserve">
+    <value>Insert into version (VersionCode) values('NullVersion 2009');</value>
+  </data>
+  <data name="SQL_Create_Init_VisitLog" xml:space="preserve">
+    <value>Insert into VisitLog (ValidFromdate, ValidToDate, VisitNumber, VisitNumberLimit, VettingNumberLimit, OriginalFileName)values (@p0, @p1, @p2, @p3, 10, @p5)</value>
+  </data>
+  <data name="SQL_GetVettingInfoByVetId" xml:space="preserve">
+    <value>SELECT 
+	a.QId
+	,a.VesselName
+	,a.InspectorName
+	,a.CompanyRepresentativeName
+	,a.VettingCode
+	,a.VetGUI
+	,a.Port
+	,a.Vetdate
+	,a.comments
+	,b.VIQGUI
+	, (CASE  
+        	WHEN c.InspectionType IS NOT NULL THEN c.InspectionType
+        	ELSE ''
+    	END) AS InspectionType
+	,a.InspectionTypeId
+	,a.VesselId
+	,a.VetId	
+FROM 
+	VettingInfo  a 
+	LEFT JOIN VIQInfo b ON a.QId = b.QId 
+	LEFT JOIN INSPECTIONTYPES c ON a.InspectionTypeId = c.InspectionTypeId 
+WHERE vetid=@p0</value>
+  </data>
+  <data name="SQL_GetVettingInfosByQid" xml:space="preserve">
+    <value>SELECT * FROM 
+VettingInfo AS vInfo 
+LEFT JOIN 
+	(
+		SELECT VETId, COUNT(*) as Answered 
+		FROM SMVetting 
+		WHERE 
+			answer IS NOT NULL 
+		GROUP BY VETId
+	) as asnNum ON vInfo.VetId=asnNum.VETId
+WHERE QId=@qid  
+ORDER BY vInfo.VetDate</value>
+  </data>
+  <data name="SQL_Insert_VIQInfo" xml:space="preserve">
+    <value>INSERT INTO VIQINFO (QID,Title,Author,Finalized,Registrationdate,comments,viqgui,NumOfQuestions) VALUES (@p_qid,@p_title,@p_author,@p_final,@p_regdate,@p_comment,@p_viqgui,@p_numofq);</value>
+  </data>
+  <data name="SQL_Insert_Questionnaire" xml:space="preserve">
+    <value>INSERT INTO [SMQuestionnaire] ( QId, ObjectId, ObjectType, CategoryId, ParentCategoryId, GlobalDisplayIndex, DisplayLevel, Children, ObjectDescription, ObjectComments,DisplayCode, DefaultCode,ParentId,InternalDisplayCode ) VALUES (@p_qid,@p_objid,@p_objtype,@p_catid,@p_parcatid,@p_glbidx,@p_dl,@p_children,@p_objdescr,@p_comm,@p_displcode,@p_defcode,@p_parentid,@p_intdisplaycode);</value>
+  </data>
+  <data name="SQL_Update_Questionnaires_By_Vet" xml:space="preserve">
+    <value>UPDATE Vetting 
+SET 
+    answer=@answer
+    ,significance=@sig
+    ,comments=@cmt 
+WHERE  
+    VetId=@vetId</value>
+  </data>
+  <data name="SQL_Update_Questionnaires_By_ObjId" xml:space="preserve">
+    <value>UPDATE Vetting 
+SET 
+    answer=@answer
+    ,significance=@sig
+    ,comments=@cmt 
+WHERE  
+   ObjectId=@objId AND VetId=@vetId</value>
+  </data>
+  <data name="SQL_Open_Attendance_Detail" xml:space="preserve">
+    <value>select InternalDisplayCode,a.*,b.answer,b.significance,b.comments from (Select a1.InternalDisplayCode,a1.DisplayCode,a1.ParentId,a1.displaylevel,a1.qid,a1.globaldisplayindex, a1.ObjectId,a1.ObjectType,a1.children ,a2.CategoryDescription ObjectDescription,null ObjectComments,a2.categorycode as defaultcode from VIQ a1 join Category  as a2 on a1.objectid=a2.categorynewid  where a1.qid=@qid UNION ALL Select a1.InternalDisplayCode,a1.DisplayCode,a1.ParentId,a1.displaylevel,a1.qid,a1.globaldisplayindex, a1.ObjectId,a1.ObjectType,a1.children ,a2.question ObjectDescription,a2.comment ObjectComments, a2.questioncode as defaultcode from VIQ a1 join QuestionPoolnew as  a2 on a1.objectid=a2.questionid  where a1.qid=@qid )A LEFT JOIN VETTING B ON A.OBJECTID=B.OBJECTID WHERE B.VETID=@vetid ORDER BY A.GLOBALDISPLAYINDEX</value>
+  </data>
+</root>

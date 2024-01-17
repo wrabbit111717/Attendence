@@ -1,0 +1,51 @@
+﻿textarea.form-control {
+    height: auto;
+    width: 500px;
+    resize: none;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #8fc59c;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #28a745;
+    border-radius: 0px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #8fc59c;
+    }
+
+::selection {
+    background-color: #28a745;
+    color: #fff;
+}
+
+
+
+    .table-div .table td, .table th {
+        padding: 0.35rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+.noRecord {
+    text-align: center;
+    padding-top: 20px !important;
+}
+main.px-0.pt-0.pb-3 {
+    padding-bottom: 0px !important;
+}
+.btnExit {
+    float: right;
+    padding-bottom: 5px;
+    margin-right: 10px;
+}

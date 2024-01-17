@@ -1,0 +1,87 @@
+﻿@model Attendance.Services.ViewModels.PaginationViewModel<Attendance.Models.AttendanceDetailItem>
+@{
+    Layout = null;
+    var hiddenQuestionnaire = (bool)TempData["HiddenQuestionnaire"];
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>@TempData["Title"]</title>
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <style>
+        table, tr, td, th, tbody, thead, tfoot {
+            page-break-inside: avoid !important;
+        }
+        tr {
+            page-break-inside: avoid;
+        }
+        table {
+            border: none!important;
+        }
+        tr.row td, tr.row th {
+            border: none!important;
+        }
+        thead, thead tr, thead tr td, thead tr th {
+            text-align: left;
+            border: none!important;
+            padding-top: 0!important;
+            padding-bottom: 0!important;
+        }
+
+        tr.row + tr td:first-child:not(.th) {
+            border: none!important;
+        }
+
+        tbody tr .th {
+            text-align: right;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <table class="table table-condensed table-bordered">
+            <tbody>
+                 @foreach (var item in Model.Data) {
+                    var hasQuestionComments = false;
+                    var hasAnswerComments = !string.IsNullOrEmpty(item.comments);
+                    var answer = item.Answer == "1" ? "YES" : item.Answer == "2" ? "NO" : item.Answer == "3" ? "N/S" : item.Answer == "4" ? "N/A" : "-";
+                    <tr class="row"><td colspan="2"></td></tr>
+                    <tr>
+                        <td></td>
+                        <td>@Html.DisplayFor((model) => item.DisplayCode)</td>
+                    </tr>
+                    <tr>
+                        <td class="th" rowspan="2"><strong>Question</strong>
+                            @if (!hiddenQuestionnaire)
+                            {
+                                <p style="padding: 3px 0 0 30px; letter-spacing: 1px; color: #787878!important; font-size:8px;">@Html.DisplayFor((model) => item.title)</p>
+                            }
+                        </td>
+                        <td colspan="2" rowspan="@(hasQuestionComments ? 0 : 2)">@(item.CategoryQuestion ?? "-")</td>
+                    </tr>
+                    <tr>
+                    @if (hasQuestionComments)
+                    {
+                            <td colspan="2" style="white-space: pre-line">@(item.CategoryQuestionComment?.Trim() ?? "")</td>
+                    }
+                    </tr>
+                    <tr>
+                        <td class="th" rowspan="2"><strong>Answer</strong></td>
+                        <td colspan="2" rowspan="@(hasAnswerComments ? 0 : 2)">@answer</td>
+                    </tr>
+                    <tr>
+                        @if (hasAnswerComments)
+                        {
+                            <td colspan="2" style="white-space: pre-line">@(item.comments?.Trim() ?? "")</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

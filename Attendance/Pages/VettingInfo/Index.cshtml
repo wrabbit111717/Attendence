@@ -1,0 +1,184 @@
+﻿@page
+@model Attendance.Pages.VettingInfo.IndexModel
+
+@{
+    ViewData["Title"] = "Attendance Registry";
+    ViewData["Menu"] = "attendance";
+    ViewData["Step"] = "Home";
+}
+<div class="container-fluid">
+    <h2>Attendance Registry</h2>
+    <div class="py-2">
+        <form>
+            <div class="form-actions form-row align-items-center">
+                <div class="col-auto">
+                    <input name="SearchString" value="@Model.CurrentFilter" type="text" class="form-control" id="searchby" placeholder="">
+                    
+                </div>
+                <div class="col-auto"><input type="submit" value="Search" class="btn btn-primary" /></div>
+                <div class="col-auto"><a asp-page="./Index">Back to full List</a></div>
+            </div>
+            <small class="form-text text-muted">
+                Vessel Name, Inspection Type
+            </small>
+        </form>
+    </div>
+    <div class="row justify-content-center align-items-center">
+        @if (TempData["message"] != null)
+        {
+            var alertType = "alert-info";
+
+            switch (Model.AlertType)
+            {
+                case Data.PageAlertType.Info:
+                    alertType = "alert-info";
+                    break;
+                case Data.PageAlertType.Success:
+                    alertType = "alert-success";
+                    break;
+                case Data.PageAlertType.Warning:
+                    alertType = "alert-warning";
+                    break;
+                case Data.PageAlertType.Danger:
+                    alertType = "alert-danger";
+                    break;
+                case Data.PageAlertType.Primary:
+                    alertType = "alert-primary";
+                    break;
+            }
+            <div class="alert @alertType mb-0" algin="center">
+                <strong>@TempData["result"]</strong> @TempData["message"]
+            </div>
+        }
+    </div>
+</div>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                <a asp-route-sort="vetId" asp-route-direction="@Model.GetNextSortDirection("vetId",Data.SortDirection.Desc)" asp-route-currentFilter="@Model.CurrentFilter">
+                    Inspection Id
+                </a>
+            </th>
+            <th>
+                <a asp-route-sort="vesselName" asp-route-direction="@Model.GetNextSortDirection("vesselName",Data.SortDirection.Desc)" asp-route-currentFilter="@Model.CurrentFilter">
+                    @Html.DisplayNameFor(model => model.VettingInfo[0].VesselName)
+                </a>
+            </th>
+            <th>
+                <a asp-route-sort="vetDate" asp-route-direction="@Model.GetNextSortDirection("vetDate",Data.SortDirection.Desc)" asp-route-currentFilter="@Model.CurrentFilter">
+                    @Html.DisplayNameFor(model => model.VettingInfo[0].VetDate)
+                </a>
+            </th>
+            <th>
+                <a asp-route-sort="insType" asp-route-direction="@Model.GetNextSortDirection("insType",Data.SortDirection.Asc)" asp-route-currentFilter="@Model.CurrentFilter">
+                    Inspection Type
+                </a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VettingInfo[0].Major)
+            </th>
+            <th>
+                <a asp-route-sort="companyRepr" asp-route-direction="@Model.GetNextSortDirection("companyRepr",Data.SortDirection.Asc)" asp-route-currentFilter="@Model.CurrentFilter">
+                    Company's Repr.
+                </a>
+            </th>
+            <th>Captain</th>
+            <th>
+                <a asp-route-sort="place" asp-route-direction="@Model.GetNextSortDirection("place",Data.SortDirection.Asc)" asp-route-currentFilter="@Model.CurrentFilter">
+                    Port/Place
+                </a>
+            </th>
+            <th>
+                <a asp-route-sort="insName" asp-route-direction="@Model.GetNextSortDirection("insName",Data.SortDirection.Asc)" asp-route-currentFilter="@Model.CurrentFilter">
+                    @Html.DisplayNameFor(model => model.VettingInfo[0].InspectorName)
+                </a>
+            </th>
+            <th style="white-space:nowrap">
+                <a asp-route-sort="title" asp-route-direction="@Model.GetNextSortDirection("title",Data.SortDirection.Desc)" asp-route-currentFilter="@Model.CurrentFilter">
+                    Release
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.VettingInfo)
+        {
+            var shortQuestTitle = (item.QuestTitle != null && item.QuestTitle.Length > 10) ? item.QuestTitle.Substring(0, 10) : item.QuestTitle;
+            <tr title="Details" class="sel" data-url="@Url.Page("/VettingInfo/Details", new { id = item.VetId})">
+                <td>
+                    @Html.DisplayFor(modelItem => item.VetId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VesselName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VetShortDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InspectionTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Major)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyRepresentativeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyRepresentativeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Port)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InspectorName)
+                </td>
+                <td data-toggle="tooltip" title="@item.QuestTitle" data-placement="left" style="max-width: 150px; overflow: hidden; white-space:nowrap; text-overflow:ellipsis">
+                    @Html.DisplayFor(modelItem => item.QuestTitle)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.VettingInfo.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.VettingInfo.HasNextPage ? "disabled" : "";
+}
+
+<div class="btn-toolbar justify-content-center" role="toolbar" aria-label="pagination toolbar">
+    <div class="btn-group mr-2" role="group" aria-label="prev">
+        <a asp-page="./Index"
+           asp-route-pageIndex="@(Model.VettingInfo.PageIndex - 1)"
+           asp-route-sort="@Model.Sort"
+           asp-route-direction="@Model.Direction"
+           asp-route-currentFilter="@Model.CurrentFilter"
+           class="btn btn-primary @prevDisabled">
+            Prev
+        </a>
+    </div>
+    <div class="btn-group" role="group" aria-label="next">
+        <a asp-page="./Index"
+           asp-route-sort="@Model.Sort"
+           asp-route-direction="@Model.Direction"
+           asp-route-pageIndex="@(Model.VettingInfo.PageIndex + 1)"
+           asp-route-currentFilter="@Model.CurrentFilter"
+           class="btn btn-primary @nextDisabled">
+            Next
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-url]').on("click", function () {
+                waitingDialog.show('Please wait...', { progressType : 'success'});
+                window.location.href = $(this).data("url");
+            })
+        })
+    </script>
+}

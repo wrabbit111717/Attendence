@@ -1,0 +1,184 @@
+﻿@page
+@model Attendance.Pages.Briefcase.ImportModel
+
+@{ ViewData["Title"] = "Briefcase";
+    ViewData["Menu"] = "briefcase";
+    ViewData["Step"] = "Home";
+}
+
+<div class="row p-3">
+    <div class="col-sm-4">
+        <h1>Import</h1>
+    </div>
+    <div class="col-sm-4">
+        @if (TempData["message"] != null)
+        {
+            var alertType = "alert-info";
+
+            switch (Model.AlertType)
+            {
+                case Data.PageAlertType.Info:
+                    alertType = "alert-info";
+                    break;
+                case Data.PageAlertType.Success:
+                    alertType = "alert-success";
+                    break;
+                case Data.PageAlertType.Warning:
+                    alertType = "alert-warning";
+                    break;
+                case Data.PageAlertType.Danger:
+                    alertType = "alert-danger";
+                    break;
+                case Data.PageAlertType.Primary:
+                    alertType = "alert-primary";
+                    break;
+            }
+
+            <div class="alert @alertType mb-0" algin="center">
+                <strong>@TempData["result"]</strong> @TempData["message"]
+            </div>}
+    </div>
+    <div class="col-sm-4">
+        <div class="row p-3 d-flex justify-content-end">
+            <form method="post" enctype="multipart/form-data" asp-action="extract">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <input asp-for="FileContent.File" type="file" accept=".sdf">
+
+                <input type="submit" value="Upload" class="btn btn-primary min-width" />
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row p-3">
+    <div class="col-sm-6">
+        <div>
+            <h5>Questionnaire Templates</h5>
+        </div>
+        <table class="table" id="questionnaireTemplatesTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SdfDbItems[0].Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SdfDbItems[0].Author)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SdfDbItems[0].RegistrationDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SdfDbItems[0].NumOfQuestions)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.SdfDbItems)
+                {
+                    var className = @item.QId == @Model.SelectedQuestionnaire ? "selected" : "sel";
+                    <tr class="@className" onclick="onSelectImportedQuestionnaire(this, '@item.QId')">
+                        <td class="app-td">
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td class="app-td">
+                            @Html.DisplayFor(modelItem => item.Author)
+                        </td>
+                        <td class="app-td">
+                            @Html.DisplayFor(modelItem => item.RegistrationDate)
+                        </td>
+                        <td class="app-td">
+                            @Html.DisplayFor(modelItem => item.NumOfQuestions)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-sm-6">
+
+        <div class="col">
+            <div>
+                <h5>Registered Attendances</h5>
+            </div>
+
+            <table class="table" id="registeredAttendancesTable">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RegisteredAttendances[0].VetId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RegisteredAttendances[0].VettingCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RegisteredAttendances[0].QId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RegisteredAttendances[0].VesselName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RegisteredAttendances[0].VetDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RegisteredAttendances[0].InspectorName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RegisteredAttendances[0].Answered)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.RegisteredAttendances)
+                    {
+                        var className = item.VetId == @Model.SelectedVettingInfo ? "selected" : "sel";
+
+                        <tr class="@className" onclick="onSelectVettingInfo(this,'@item.VetId')">
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.VetId)
+                            </td>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.VettingCode)
+                            </td>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.QId)
+                            </td>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.VesselName)
+                            </td>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.VetDate)
+                            </td>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.InspectorName)
+                            </td>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.Answered)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <form method="post" asp-action="import">
+                <input asp-for="SelectedVettingInfo" id="SelectedVettingInfo" type="hidden" accept=".sdf">
+                <input type="submit" value="Transfer to Database" class="btn btn-primary min-width" />
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function onSelectImportedQuestionnaire(sender, qId) {
+        window.location.href = '/Briefcase/Import?action=importSelected&qId=' + qId;
+    }
+
+    function onSelectVettingInfo(sender, vId) {
+        $('#SelectedVettingInfo').val(vId);
+
+        $('#registeredAttendancesTable').find('> tbody > tr').each(function () {
+            var row = $(this);
+            $(row).attr('class', 'sel');
+        });
+        $(sender).attr('class', 'selected');
+    }
+</script>

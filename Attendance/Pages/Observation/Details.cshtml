@@ -1,0 +1,411 @@
+﻿@page
+@model Attendance.Pages.Observation.DetailsModel
+@{ 
+    ViewData["Title"] = "Observation Assignee";
+    ViewData["Menu"] = "attendance";
+    ViewData["Step"] = "Home"; 
+}
+
+<head>
+    <link href="~/css/attachment.css" rel="stylesheet" />
+    <link href="~/css/slider.css" rel="stylesheet" />
+    <style>
+        .item-column {
+            border: dashed lightgrey!important;
+        }
+        .obs-table-title-board {
+            background-color: lightgray;
+        }
+        .bg-success {
+            background-color: #28a745 !important;
+        }
+        .navbar {
+            position: relative;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -ms-flex-align: center;
+            align-items: center;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
+        }
+    </style>
+    <script src="~/js/slider.js"></script>
+</head>
+
+<div>
+    @{ 
+        var assigneeList = Model.ObservationAssigneeInfo?.listAssigneeViewModel;
+        var attachList = Model.ObservationsSire2Attachments;
+        var nocList = Model.ObservationNoc;
+        var socList = Model.ObservationSoc;
+    }
+    <div class="container">
+        <div class="d-flex justify-content-between my-2">
+            <h2>Observation ID: @Model.id</h2>
+            <a asp-page="../VettingInfo/Details" asp-route-id="@Model.ObservationAssigneeInfo.VetID"
+               asp-route-pageNumber="@Model.ObservationAssigneeInfo?.pageNumber">Back to List</a>
+        </div>
+        <table class="mx-auto table table-sm table-bordered" style="table-layout: fixed">
+            <colgroup>
+                <col style="width: 20%;">
+                <col style="width: 80%;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>Observation Text</th>
+                    <td >@Html.TextAreaFor(model => model.ObservationAssigneeInfo.OnservationText, 5, 20, htmlAttributes: new { @class = "form-control width-textarea" })</td>
+                </tr>
+
+                <tr>
+                    <th>
+                        Assignees
+                    </th>
+                    <td >
+                        @if (assigneeList != null && assigneeList.Any())
+                        {
+                            for (int i = 1; i <= assigneeList.Count; i++)
+                            {
+                                var assgnee = i + ") " + assigneeList[i - 1].AssigneeFullName + " - ";
+                                <span style="display:block">
+                                    @Html.DisplayFor(m => assgnee)
+                                    <b>
+                                        @Html.DisplayFor(m => assigneeList[i - 1].OfficerName)
+                                    </b>
+                                </span>
+                            }
+                        }
+                        else
+                        {
+                            <span>No Information Available</span>
+                        }
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>
+                        Attachments
+                    </th>
+                    <td >
+                        <form method="post" enctype="multipart/form-data" asp-action="extract">
+                            <p>
+                                @if (attachList.Count > 0)
+                                {
+                                    <input type="hidden" name="obs_Id" value="@attachList[0].obs_id" />
+                                    <input asp-page-handler="ObservationDownloadAll" class="btn btn-primary min-width" type="submit" value="Download All" />
+                                }
+                            </p>
+                        </form>
+
+                        @if (attachList != null && attachList.Count > 0)
+                        {
+                            <div id="AttandanceImgSlider" class="carousel slide" data-interval="false">
+                                <div class="carousel-indicators">
+                                    @for (int i = 0; i < attachList.Count; i++)
+                                    {
+                                        if (i == 0)
+                                        {
+                                            <button type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide-to="@i" class="active"></button> }
+                                        else
+                                        {
+                                            <button type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide-to="@i"></button>
+                                        }
+                                    }
+                                </div>
+
+                                <div class="carousel-inner">
+                                    @{ bool isfirst = true;
+                                        foreach (var img in attachList)
+                                        {
+                                            if (img.attachment != null)
+                                            {
+                                                string imageBase64 = Convert.ToBase64String(img.attachment);
+                                                string imageSrc = string.Format("data:image/gif;base64,{0}", imageBase64);
+                                                <div class="@(isfirst ? "carousel-item active" : "carousel-item")">
+
+                                                    <img src="@imageSrc" alt="@img.attachment_name" class="img-fluid" style="width:100%;">
+
+                                                    <form method="post" enctype="multipart/form-data" asp-action="extract">
+                                                        <div class="carousel-caption">
+                                                            <input type="hidden" name="obs_id" value="@img.obs_id" />
+                                                            <input type="hidden" name="id" value="@img.id" />
+
+                                                            <input asp-page-handler="ObservationDownload" class="btn btn-primary min-width" type="submit" value="Download">
+                                                            <input asp-page-handler="ObservationDelete" class="btn btn-primary min-width" type="submit" value="Delete">
+                                                        </div>
+                                                    </form>
+                                                </div> isfirst = false;
+                                            }
+                                        }
+                                    }
+                                </div>
+
+                                <button class="carousel-control-prev" type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon"></span>
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <span>No Information Available</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Nature of Concern
+                    </th>
+                    <td>
+                        @{
+                            var firstItemNoc = nocList.FirstOrDefault();
+                            var propertiesNoc = firstItemNoc?.GetType().GetProperties().Where(p => p.Name != "ObservationID");
+                        }
+
+                        @if (firstItemNoc != null && propertiesNoc != null)
+                        {
+                        <table class="w-100">
+                            <thead>
+                                <tr class="obs-table-title-board">
+                                    <th style="width: 4%;">No</th>
+                                    <th style="width: 96%;">Title</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td colspan="2" class="text-center item-column"><strong>Human</strong></td>
+                            </tr>
+                            @{
+                                int humanIndex = 0;
+                            }
+                            
+                            @foreach (var itemNoc in nocList)
+                            {
+                                var hardwareProperties = propertiesNoc.Where(p => p.Name.Contains("Human")).ToList();
+
+                                if (hardwareProperties.Any(prop => !string.IsNullOrWhiteSpace(prop.GetValue(itemNoc)?.ToString())))
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.Raw($"{++humanIndex}") <!-- Display the index for each row -->
+                                        </td>
+
+                                        @foreach (var propertyNoc in hardwareProperties)
+                                        {
+                                            var propertyValue = propertyNoc.GetValue(itemNoc)?.ToString();
+                                            if (!string.IsNullOrWhiteSpace(propertyValue))
+                                            {
+                                                <td  colspan="2" >
+                                                    @Html.Raw(propertyValue)
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            }                                         
+
+                            <tr>
+                                <td colspan="2" class="text-center item-column"><strong>Process</strong></td>
+                            </tr>
+                            @{
+                                int processIndex = 0;
+                            }
+
+                            @foreach (var itemNoc in nocList)
+                            {
+                                var hardwareProperties = propertiesNoc.Where(p => p.Name.Contains("Process")).ToList();
+
+                                if (hardwareProperties.Any(prop => !string.IsNullOrWhiteSpace(prop.GetValue(itemNoc)?.ToString())))
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.Raw($"{++processIndex}") <!-- Display the index for each row -->
+                                        </td>
+
+                                        @foreach (var propertyNoc in hardwareProperties)
+                                        {
+                                            var propertyValue = propertyNoc.GetValue(itemNoc)?.ToString();
+                                            if (!string.IsNullOrWhiteSpace(propertyValue))
+                                            {
+                                                <td colspan="2">
+                                                    @Html.Raw(propertyValue)
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            }
+                            <tr>
+                                <td colspan="2" class="text-center item-column"><strong>Hardware</strong></td>
+                            </tr>
+                            @{
+                                int hardIndex = 0;
+                            }
+                            
+                            @foreach (var itemNoc in nocList)
+                            {
+                                var hardwareProperties = propertiesNoc.Where(p => p.Name.Contains("Hardware")).ToList();
+
+                                if (hardwareProperties.Any(prop => !string.IsNullOrWhiteSpace(prop.GetValue(itemNoc)?.ToString())))
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.Raw($"{++hardIndex}") <!-- Display the index for each row -->
+                                        </td>
+
+                                        @foreach (var propertyNoc in hardwareProperties)
+                                        {
+                                            var propertyValue = propertyNoc.GetValue(itemNoc)?.ToString();
+                                            if (!string.IsNullOrWhiteSpace(propertyValue))
+                                            {
+                                                <td colspan="2">
+                                                    @Html.Raw(propertyValue)
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            }                                                                    
+                            </tbody>
+                        </table>
+                        }
+                        else
+                        {
+                            <span>No Information Available</span>
+                        }
+                    </td>
+                </tr>
+                            
+                <tr>
+                    <th>
+                        Subject of Concern
+                    </th>
+                    <td>
+                        @{
+                            var firstItemSoc = socList.FirstOrDefault();
+                            var propertiesSoc = firstItemSoc?.GetType().GetProperties().Where(p => p.Name != "ObservationID");
+                        }
+
+                        @if (firstItemSoc != null && propertiesSoc != null)
+                        {
+                        <table class="w-100">
+                            <thead>
+                                <tr class="obs-table-title-board">
+                                    <th style="width: 4%;">No</th>
+                                    <th style="width: 32%;">Level1</th>
+                                    <th style="width: 32%;">Level2</th>
+                                    <th style="width: 32%;">Level3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td colspan="4" class="text-center item-column"><strong>Human</strong></td>
+                            </tr>
+                            @{
+                                int humanIndex = 0;
+                            }
+                            
+                            @foreach (var itemSoc in socList)
+                            {
+                                var hardwareProperties = propertiesSoc.Where(p => p.Name.Contains("Human")).ToList();
+
+                                if (hardwareProperties.Any(prop => !string.IsNullOrWhiteSpace(prop.GetValue(itemSoc)?.ToString())))
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.Raw($"{++humanIndex}") <!-- Display the index for each row -->
+                                        </td>
+
+                                        @foreach (var propertySoc in hardwareProperties)
+                                        {
+                                            var propertyValue = propertySoc.GetValue(itemSoc)?.ToString();
+                                            if (!string.IsNullOrWhiteSpace(propertyValue))
+                                            {
+                                                <td  colspan="4" >
+                                                    @Html.Raw(propertyValue)
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            }                                         
+
+                            <tr>
+                                <td colspan="4" class="text-center item-column"><strong>Process</strong></td>
+                            </tr>
+                            @{
+                                int processIndex = 0;
+                            }
+
+                            @foreach (var itemSoc in socList)
+                            {
+                                var hardwareProperties = propertiesSoc.Where(p => p.Name.Contains("Process")).ToList();
+
+                                if (hardwareProperties.Any(prop => !string.IsNullOrWhiteSpace(prop.GetValue(itemSoc)?.ToString())))
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.Raw($"{++processIndex}") <!-- Display the index for each row -->
+                                        </td>
+
+                                        @foreach (var propertySoc in hardwareProperties)
+                                        {
+                                            var propertyValue = propertySoc.GetValue(itemSoc)?.ToString();
+                                            if (!string.IsNullOrWhiteSpace(propertyValue))
+                                            {
+                                                <td>
+                                                    @Html.Raw(propertyValue)
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            }
+                            <tr>
+                                <td colspan="4" class="text-center item-column"><strong>Hardware</strong></td>
+                            </tr>
+                            @{
+                                int hardIndex = 0;
+                            }
+                            
+                            @foreach (var itemSoc in socList)
+                            {
+                                var hardwareProperties = propertiesSoc.Where(p => p.Name.Contains("Hardware")).ToList();
+
+                                if (hardwareProperties.Any(prop => !string.IsNullOrWhiteSpace(prop.GetValue(itemSoc)?.ToString())))
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.Raw($"{++hardIndex}") <!-- Display the index for each row -->
+                                        </td>
+
+                                        @foreach (var propertySoc in hardwareProperties)
+                                        {
+                                            var propertyValue = propertySoc.GetValue(itemSoc)?.ToString();
+                                            if (!string.IsNullOrWhiteSpace(propertyValue))
+                                            {
+                                                <td>
+                                                    @Html.Raw(propertyValue)
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            }                                            
+                            </tbody>
+                        </table>
+                        }
+                        else
+                        {
+                            <span>No Information Available</span>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

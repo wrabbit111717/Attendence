@@ -1,0 +1,367 @@
+﻿@page
+@model Attendance.Pages.AddOverview.IndexModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Add";
+    ViewData["Menu"] = "addoverview";
+    ViewData["Step"] = "Home";
+}
+
+@*<br/>
+    <h2>Overview</h2>*@
+@*<div class="ml-3 mt-3">
+        <a asp-page="/VIQInfo/Edit" asp-route-pageIndex="">Back to the Edit</a>
+    </div>*@
+
+<div class="row p-3">
+    <div class="col-sm-2">
+        <div class="row px-3 d-flex justify-content-between">
+            <div>
+                <h5>Question Type</h5>
+            </div>
+        </div>
+        @*<partial name="_DisplayCategoryPartial" />*@
+        <form asp-page="./Index" method="get" id="formType">
+            <input type="hidden" name="showAfterThisID" id="showAfterThisID" value="@Model.ShowAfterId" />
+            <input type="hidden" name="typeID" id="typeID" value="" />
+            <input type="hidden" name="pageIndex" value="@Model.Category.PageIndex" />
+            <input type="hidden" name="currentFilterCategory" value="@Model.CurrentFilterCategory" />
+            <input type="hidden" name="selectedCategoryNewID" id="selectedCategoryNewID" value="@Model.SelectedCategoryNewID" />
+            <input type="hidden" name="pQId" id="pQId" value="@Model.pQId" />
+            <input type="hidden" name="pPageIndex" id="pPageIndex" value="@Model.pPageIndex" />
+
+            <div class="table-responsive">
+                <table class="table" border="1">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.QuestionType[0].TypeCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.QuestionType[0].TypeDescription)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.QuestionType)
+                        {
+                            var className = @item.TypeId == @Model.SelectedTypeID ? "selected" : "sel";
+                            <tr class="@className" onclick="onSelectType('@item.TypeId')">
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.TypeCode)
+                                </td>
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.TypeDescription)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="col-sm-4">
+        <div class="row px-3 d-flex justify-content-between">
+            <div>
+                <h5>Categories</h5>
+            </div>
+            <form asp-page="./Index" method="get">
+                <div class="input-group">
+                    <input type="hidden" name="pQId" id="pQId" value="@Model.pQId" />
+                    <input type="hidden" name="pPageIndex" id="pPageIndex" value="@Model.pPageIndex" />
+                    <input type="hidden" name="showAfterThisID" id="showAfterThisID" value="@Model.ShowAfterId" />
+                    <input type="text" name="SearchCategory" value="@Model.CurrentFilterCategory" class="form-control" placeholder="Search...">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @*<partial name="_DisplayCategoryPartial" />*@
+        <form asp-page="./Index" method="get" id="formCategory">
+            <input type="hidden" name="showAfterThisID" id="showAfterThisID" value="@Model.ShowAfterId" />
+            <input type="hidden" name="pageIndex" value="@Model.Category.PageIndex" />
+            <input type="hidden" name="currentFilterCategory" value="@Model.CurrentFilterCategory" />
+            <input type="hidden" name="categoryNewID" id="categoryNewID" value="" />
+            <input type="hidden" name="selectedTypeID" id="selectedTypeID" value="@Model.SelectedTypeID" />
+            <input type="hidden" name="pQId" id="pQId" value="@Model.pQId" />
+            <input type="hidden" name="pPageIndex" id="pPageIndex" value="@Model.pPageIndex" />
+
+            <div class="table-responsive">
+                <table class="table" border="1">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Category[0].CategoryCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Category[0].CategoryDescription)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Category)
+                        {
+                            var className = @item.CategoryNewID == @Model.SelectedCategoryNewID ? "selected" : "sel";
+                            <tr class="@className">
+                                <td class="app-td" onclick="onSelectCategory('@item.CategoryNewID')">
+                                    @Html.DisplayFor(modelItem => item.CategoryCode)
+                                </td>
+                                <td class="app-td" onclick="onSelectCategory('@item.CategoryNewID')">
+                                    @Html.DisplayFor(modelItem => item.CategoryDescription)
+                                </td>
+                                @if (item.IsAlreadyAddedCategory)
+                                {
+                                    <td class="app-td" id="@item.CategoryNewID">
+                                        <i class="material-icons" style="font-size:20px;color:black">check</i>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="app-td" id="@item.CategoryNewID" onclick="onAddCategory('@item.CategoryNewID', @Model.ShowAfterId)">
+                                        <i class="material-icons" style="font-size:20px;color:black">add</i>
+                                    </td>
+
+                                }
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+
+        </form>
+        @{
+            var prevDisabled = !Model.Category.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.Category.HasNextPage ? "disabled" : "";
+        }
+
+        <a asp-page="./Index"
+           asp-route-pageIndex="@(Model.Category.PageIndex - 1)"
+           asp-route-qPageIndex="@(Model.QuestionPool.PageIndex)"
+           asp-route-currentFilterCategory="@Model.CurrentFilterCategory"
+           asp-route-currentFilterQuestionPool="@Model.CurrentFilterQuestionPool"
+           asp-route-selectedTypeID="@Model.SelectedTypeID"
+           asp-route-pQId="@Model.pQId"
+           asp-route-pPageIndex="@Model.pPageIndex"
+           asp-route-showAfterThisID="@Model.ShowAfterId"
+           class="btn btn-primary @prevDisabled">
+            Prev
+        </a>
+        <a asp-page="./Index"
+           asp-route-pageIndex="@(Model.Category.PageIndex + 1)"
+           asp-route-qPageIndex="@(Model.QuestionPool.PageIndex)"
+           asp-route-currentFilterCategory="@Model.CurrentFilterCategory"
+           asp-route-currentFilterQuestionPool="@Model.CurrentFilterQuestionPool"
+           asp-route-selectedTypeID="@Model.SelectedTypeID"
+           asp-route-pQId="@Model.pQId"
+           asp-route-pPageIndex="@Model.pPageIndex"
+           asp-route-showAfterThisID="@Model.ShowAfterId"
+           class="btn btn-primary @nextDisabled">
+            Next
+        </a>
+
+        <a class="ml-4" asp-page="/VIQInfo/Edit"
+           asp-route-id="@Model.pQId"
+           asp-route-pageIndex="@Model.pPageIndex">Back to the Edit</a>
+
+    </div>
+
+    <div class="col-sm-6">
+
+        <div class="row px-3 d-flex justify-content-between">
+            <div>
+                <h5>Question Pool</h5>
+            </div>
+            <div class="row px-3">
+                @{
+                    var prevDisabled1 = !Model.QuestionPool.HasPreviousPage ? "disabled" : "";
+                    var nextDisabled1 = !Model.QuestionPool.HasNextPage ? "disabled" : "";
+                }
+
+                <a asp-page="./Index"
+                   asp-route-pageIndex="@(Model.Category.PageIndex)"
+                   asp-route-qPageIndex="@(Model.QuestionPool.PageIndex - 1)"
+                   asp-route-selectedCategoryNewID="@Model.SelectedCategoryNewID"
+                   asp-route-currentFilterCategory="@Model.CurrentFilterCategory"
+                   asp-route-currentFilterQuestionPool="@Model.CurrentFilterQuestionPool"
+                   asp-route-selectedTypeID="@Model.SelectedTypeID"
+                   asp-route-pQId="@Model.pQId"
+                   asp-route-pPageIndex="@Model.pPageIndex"
+                   asp-route-showAfterThisID="@Model.ShowAfterId"
+                   class="align-self-center @prevDisabled1">
+                    <i class="fa fa-arrow-circle-left @prevDisabled1"></i>
+                </a>
+                <a asp-page="./Index"
+                   asp-route-pageIndex="@(Model.Category.PageIndex)"
+                   asp-route-qPageIndex="@(Model.QuestionPool.PageIndex + 1)"
+                   asp-route-selectedCategoryNewID="@Model.SelectedCategoryNewID"
+                   asp-route-currentFilterCategory="@Model.CurrentFilterCategory"
+                   asp-route-currentFilterQuestionPool="@Model.CurrentFilterQuestionPool"
+                   asp-route-selectedTypeID="@Model.SelectedTypeID"
+                   asp-route-pQId="@Model.pQId"
+                   asp-route-pPageIndex="@Model.pPageIndex"
+                   asp-route-showAfterThisID="@Model.ShowAfterId"
+                   class="align-self-center ml-1 mr-3 @nextDisabled1">
+                    <i class="fa fa-arrow-circle-right @nextDisabled1"></i>
+                </a>
+
+                <form asp-page="./Index" method="get">
+                    <div class="input-group">
+                        <input type="hidden" name="showAfterThisID" id="showAfterThisID" value="@Model.ShowAfterId" />
+                        <input type="hidden" name="pageIndex" value="@Model.Category.PageIndex" />
+                        <input type="text" name="SearchQuestionPool" value="@Model.CurrentFilterQuestionPool" class="form-control" placeholder="Search...">
+                        <input type="hidden" name="SelectedCategoryNewID" value="@Model.SelectedCategoryNewID" />
+                        <input type="hidden" name="selectedTypeID" value="@Model.SelectedTypeID" />
+                        <input type="hidden" name="pQId" id="pQId" value="@Model.pQId" />
+                        <input type="hidden" name="pPageIndex" id="pPageIndex" value="@Model.pPageIndex" />
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="submit">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        <div class="table-responsive">
+            <table class="table" border="1">
+                <thead>
+                    <tr>
+                        <th>
+                            QuestionCode
+                        </th>
+                        <th>
+                            Question
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.QuestionPool[0].CategoryID)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.QuestionPool[0].CategoryCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.QuestionPool[0].Origin)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.QuestionPool)
+                    {
+                        <tr>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.questioncode)
+                            </td>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.question)
+                            </td>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.CategoryID)
+                            </td>
+                            <td class="app-td">
+                                @*@Html.DisplayFor(modelItem => item.CategoryCode)*@
+                            </td>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.Origin)
+                            </td>
+                            @if (item.IsAlreadyAddedQuestion)
+                            {
+                                <td class="app-td cursor-hand" id="@item.questionid">
+                                    <i class="material-icons" style="font-size:20px;color:black">check</i>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="app-td cursor-hand" id="@item.questionid" onclick="onAddQuestion('@item.questionid', @Model.ShowAfterId)">
+                                    <i class="material-icons" style="font-size:20px;color:black">add</i>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.AntiForgeryToken()
+    </div>
+</div>
+<div class="row justify-content-center align-items-center">
+    <div class="alert alert-success mb-0" style="display: none" align="center" id="alert">
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        function onSelectCategory(categoryNewID) {
+        $("#categoryNewID").val(categoryNewID);
+        $("#formCategory").submit();
+    }
+        function onSelectType(typeID) {
+        $("#typeID").val(typeID);
+        $("#formType").submit();
+    }
+
+    function onAddCategory(categoryNewID, showAfterId) {
+
+        $.ajax({
+            type: "POST",
+            url: '/AddOverview/index?handler=AddCategory',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: JSON.stringify({
+                QId: @Model.pQId,
+                guid: categoryNewID,
+                showAfterId: showAfterId
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $('#' + response[2]).html("<i class=\"material-icons\" style=\"font-size:20px;color:black\">check</i>");
+                $('#alert').html("<strong>Success </strong>" + response[3]);
+                $('#alert').show().delay(2000).fadeOut();
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+    }
+
+        function onAddQuestion(questionid, showAfterId) {
+        $.ajax({
+            type: "POST",
+            url: '/AddOverview/index?handler=AddQuestion',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: JSON.stringify({
+                QId: @Model.pQId,
+                guid: questionid,
+                showAfterId: showAfterId
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $('#' + response[2]).html("<i class=\"material-icons\" style=\"font-size:20px;color:black\">check</i>");
+                $('#alert').html("<strong>Success </strong>" + response[3]);
+                $('#alert').show().delay(2000).fadeOut();
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+    }
+    </script>
+}

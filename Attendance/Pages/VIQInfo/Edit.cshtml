@@ -1,0 +1,188 @@
+﻿@page
+@model Attendance.Pages.VIQInfo.EditModel
+
+@{
+    ViewData["Title"] = "VIQInfo";
+    ViewData["Menu"] = "viqinfo";
+}
+<div class="container-fluid">
+<h1>Edit</h1>
+<div class="row justify-content-center align-items-center">
+    @if (TempData["message"] != null)
+    {
+        var alertType = "alert-info";
+
+        switch (Model.AlertType)
+        {
+            case Data.PageAlertType.Info:
+                alertType = "alert-info";
+                break;
+            case Data.PageAlertType.Success:
+                alertType = "alert-success";
+                break;
+            case Data.PageAlertType.Warning:
+                alertType = "alert-warning";
+                break;
+            case Data.PageAlertType.Danger:
+                alertType = "alert-danger";
+                break;
+            case Data.PageAlertType.Primary:
+                alertType = "alert-primary";
+                break;
+        }
+        <div class="alert @alertType mb-0" algin="center">
+            <strong>@TempData["result"]</strong> @TempData["message"]
+        </div>
+    }
+</div>
+<h4>VIQInfoModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4" style="border-right: solid 1px gray;">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="VIQInfoModel.QId" />
+            <div class="form-group">
+                <label asp-for="VIQInfoModel.Title" class="control-label"></label>
+                <input asp-for="VIQInfoModel.Title" class="form-control" />
+                <span asp-validation-for="VIQInfoModel.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VIQInfoModel.Author" class="control-label"></label>
+                <input asp-for="VIQInfoModel.Author" class="form-control" />
+                <span asp-validation-for="VIQInfoModel.Author" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VIQInfoModel.RegistrationDate" class="control-label"></label>
+                <input asp-for="VIQInfoModel.RegistrationDate" class="form-control" />
+                <span asp-validation-for="VIQInfoModel.RegistrationDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VIQInfoModel.NumOfQuestions" class="control-label"></label>
+                <input asp-for="VIQInfoModel.NumOfQuestions" class="form-control" />
+                <span asp-validation-for="VIQInfoModel.NumOfQuestions" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VIQInfoModel.Comments" class="control-label"></label>
+                <input asp-for="VIQInfoModel.Comments" class="form-control" />
+                <span asp-validation-for="VIQInfoModel.Comments" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="VIQInfoModel.version" class="control-label"></label>
+                <input asp-for="VIQInfoModel.version" class="form-control" />
+                <span asp-validation-for="VIQInfoModel.version" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-8">
+        <div class="tableFixHead">
+            @*Categories and Questions*@
+            <table class="table detailTable">
+                <thead>
+                    <tr>
+                        <th>
+                            Code
+                        </th>
+                        <th>
+                            Description
+                        </th>
+                        <th>
+                            Type
+                        </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.VIQDetail)
+                    {
+                        <tr class="sel">
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.Code)
+                            </td>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                            <td class="app-td">
+                                @Html.DisplayFor(modelItem => item.Type)
+                            </td>
+                            <td class="app-td">
+                                <a asp-page=""
+                                   asp-route-id="@Model.QId"
+                                   asp-route-pageIndex="@Model.PageIndex"
+                                   asp-route-deleteID="@item.Id">Delete</a>
+                            </td>
+                            <td class="app-td">
+                                @if (item != Model.VIQDetail.Last())
+                                {
+                                    <a asp-page=""
+                                       asp-route-id="@Model.QId"
+                                       asp-route-pageIndex="@Model.PageIndex"
+                                       asp-route-moveDownID="@item.ShowAfterId"
+                                       asp-route-showAfterThisID="@item.ShowAfterId">Move Down</a>
+                                }
+                            </td>
+                            <td class="app-td">
+                                @if (item != Model.VIQDetail.First())
+                                {
+                                    <a asp-page=""
+                                       asp-route-id="@Model.QId"
+                                       asp-route-pageIndex="@Model.PageIndex"
+                                       asp-route-moveUpID="@item.ShowAfterId"
+                                       asp-route-showAfterThisID="@item.ShowAfterId">Move Up</a>
+                                }
+                            </td>
+                            <td class="app-td">
+                                <a asp-page="/AddOverview/Index"
+                                   asp-route-pQId="@Model.QId"
+                                   asp-route-pPageIndex="@Model.PageIndex"
+                                   asp-route-showAfterThisID="@item.ShowAfterId">Add Below</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (@Model.VIQDetail.LastOrDefault() != null)
+        {
+            <div class="mt-3">
+                <a asp-page="/AddOverview/Index"
+                   asp-route-pQId="@Model.QId"
+                   asp-route-pPageIndex="@Model.PageIndex"
+                   asp-route-showAfterThisID="@Model.VIQDetail.Last().ShowAfterId">Add category | question</a>@* |
+                    <a asp-page="/AddOverview/Index"
+                       asp-route-pQId="@Model.QId"
+                       asp-route-pPageIndex="@Model.PageIndex"
+                       >Add question</a>*@
+            </div>
+        }
+        else
+        {
+            <div class="mt-3">
+                <a asp-page="/AddOverview/Index"
+                   asp-route-pQId="@Model.QId"
+                   asp-route-pPageIndex="@Model.PageIndex"
+                   asp-route-showAfterThisID="null">Add category | question</a>@* |
+                    <a asp-page="/AddOverview/Index"
+                       asp-route-pQId="@Model.QId"
+                       asp-route-pPageIndex="@Model.PageIndex"
+                       >Add question</a>*@
+            </div>
+        }
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index" asp-route-pageIndex="@(Model.PageIndex)">Back to List</a>
+</div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

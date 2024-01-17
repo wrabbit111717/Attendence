@@ -1,0 +1,39 @@
+﻿@page
+@model Attendance.Pages.QuestionType.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+<div class="container-fluid">
+<h1>Create</h1>
+
+<h4>QuestionType</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="QuestionType.TypeCode" class="control-label"></label>
+                <input asp-for="QuestionType.TypeCode" class="form-control" />
+                <span asp-validation-for="QuestionType.TypeCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="QuestionType.TypeDescription" class="control-label"></label>
+                <input asp-for="QuestionType.TypeDescription" class="form-control" />
+                <span asp-validation-for="QuestionType.TypeDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

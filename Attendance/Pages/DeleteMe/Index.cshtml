@@ -1,0 +1,198 @@
+﻿@page
+@model Attendance.Pages.Briefcase.IndexModel
+
+@{ ViewData["Title"] = "Briefcase";
+    ViewData["Menu"] = "briefcase";
+    ViewData["Step"] = "Home"; 
+}
+@{
+    var alertType = "alert-info";
+    if (TempData["message"] != null)
+    {
+        switch (Model.AlertType)
+        {
+            case Data.PageAlertType.Info:
+                alertType = "alert-info";
+                break;
+            case Data.PageAlertType.Success:
+                alertType = "alert-success";
+                break;
+            case Data.PageAlertType.Warning:
+                alertType = "alert-warning";
+                break;
+            case Data.PageAlertType.Danger:
+                alertType = "alert-danger";
+                break;
+            case Data.PageAlertType.Primary:
+                alertType = "alert-primary";
+                break;
+        }
+    }
+}
+
+<div class="d-flex justify-content-between align-items-center my-4 px-2">
+    <div class="d-inline-block align-middle">
+        <h1 class="my-0">
+            Briefcase  <a asp-page="./import"
+                          class="btn btn-primary my-0">Import</a>
+        </h1>
+       
+    </div>
+    @if (!string.IsNullOrEmpty(TempData["result"]?.ToString()))
+    {
+        <div class="alert @alertType">
+            <strong>@TempData["result"]</strong> @TempData["message"]
+        </div>
+    }
+    <form method="post">
+        <div class="form-row align-items-center">
+            <div class="col-auto"><input asp-for="ExportModel.UserName" class="form-control" placeholder="Username" /></div>
+            <div class="col-auto">
+                <select asp-for="ExportModel.VettingType" asp-items="Model.InspectorTypes" class="form-control">
+                    <option value="">Choose a tag</option>
+                </select>
+            </div>
+            <div class="col-auto"><input type="submit" value="Save" class="btn btn-primary" /></div>
+            
+            
+            
+        </div>
+        
+    </form>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            User Name
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Vessel Name</h5>
+            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            <a href="#" class="btn btn-sm btn-link">Edit</a>
+            <a href="#" class="btn btn-sm btn-link">Action 2</a>
+            <a href="#" class="btn btn-sm btn-danger">Action 3</a>
+        </div>
+        <div class="card-footer text-muted">
+            Date Range
+        </div>
+    </div>
+
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+
+
+<div class="row px-2">
+    <div class="col-sm-6 px-0">
+        <div>
+            <h4>Questionnaire Templates</h4>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VIQInfoModel[0].QId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VIQInfoModel[0].Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VIQInfoModel[0].Author)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VIQInfoModel[0].RegistrationDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VIQInfoModel[0].NumOfQuestions)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.VIQInfoModel)
+                {
+                <tr class="border-right">
+                    <td class="app-td">
+                        @Html.DisplayFor(modelItem => item.QId)
+                    </td>
+                    <td class="app-td">
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td class="app-td">
+                        @Html.DisplayFor(modelItem => item.Author)
+                    </td>
+                    <td class="app-td">
+                        @Html.DisplayFor(modelItem => item.RegistrationDate)
+                    </td>
+                    <td class="app-td">
+                        @Html.DisplayFor(modelItem => item.NumOfQuestions)
+                    </td>
+                    <td class="app-td px-2">
+                        <a asp-page="./index"
+                           asp-route-action="transfer"
+                           asp-route-alerttype=@Model.AlertType
+                           asp-route-id="@item.QId">Transfer</a>
+                    </td>
+                </tr>}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-sm-6 px-0">
+        <div>
+            <h4>Registered Questionnaires</h4>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VIQInfoModel[0].QId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VIQInfoModel[0].Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VIQInfoModel[0].Author)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VIQInfoModel[0].RegistrationDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VIQInfoModel[0].NumOfQuestions)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.RegisteredQuestionnaires)
+                {
+                <tr>
+                    <td class="app-td">
+                        @Html.DisplayFor(modelItem => item.QId)
+                    </td>
+                    <td class="app-td">
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td class="app-td">
+                        @Html.DisplayFor(modelItem => item.Author)
+                    </td>
+                    <td class="app-td">
+                        @Html.DisplayFor(modelItem => item.RegistrationDate)
+                    </td>
+                    <td class="app-td">
+                        @Html.DisplayFor(modelItem => item.NumOfQuestions)
+                    </td>
+                    <td class="app-td">
+                        <a asp-page="./index"
+                           asp-route-action="remove"
+                           asp-route-alerttype=@Model.AlertType
+                           asp-route-id="@item.QId" class="text-danger">Remove</a>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>

@@ -1,0 +1,52 @@
+﻿@page
+@model Attendance.Pages.QuestionType.IndexModel
+
+@{
+    ViewData["Title"] = "QuestionType";
+    ViewData["Menu"] = "questiontype";
+    ViewData["Step"] = "Home";
+}
+<div class="container-fluid">
+<h1>Question Type</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.QuestionType[0].TypeCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QuestionType[0].TypeDescription)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.QuestionType)
+        {
+            <tr>
+                <td class="app-td">
+                    @Html.DisplayFor(modelItem => item.TypeCode)
+                </td>
+                <td class="app-td">
+                    @Html.DisplayFor(modelItem => item.TypeDescription)
+                </td>
+                <td class="app-td control">
+                    <a asp-page="./Edit" asp-route-id="@item.TypeId">
+                        <i class="material-icons" style="font-size:20px;color:black">edit</i>
+                    </a> |
+                    <a asp-page="./Details" asp-route-id="@item.TypeId" class="m-1">
+                        <i class='far fa-eye' style='font-size:20px;color:black'></i>
+                    </a> |
+                    <a asp-page="./Delete" asp-route-id="@item.TypeId">
+                        <i class="material-icons" style="font-size:20px;color:black">delete_forever</i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

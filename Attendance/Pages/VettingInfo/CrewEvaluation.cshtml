@@ -1,0 +1,127 @@
+﻿@page
+@model Attendance.Pages.VettingInfo.CrewEvaluationModel
+@{
+    ViewData["Title"] = "Crew Evaluation";
+}
+
+<head>
+    <link href="~/css/crewevaluation.css" rel="stylesheet" />
+</head>
+
+<div class="container-fluid">
+    <h1>Crew Evaluation</h1>
+</div>
+
+<br />
+<div class="btnExit">
+
+    @{
+        <a asp-page="../VettingInfo/Details" asp-route-id="@Model.VetID"
+           class="btn btn-primary">
+            Exit
+        </a>
+    }
+</div>
+<div>
+    <table class="table" style="margin-bottom:0px">
+        <thead>
+            <tr>
+                <th>
+                    Crew Name
+                </th>
+                <th>
+                    <a asp-route-id="@Model.VetID" asp-route-sort="crewrank" asp-route-direction="@Model.GetNextSortDirection("crewrank",Data.SortDirection.Desc)">
+                        Crew Rank
+                    </a>
+                </th>
+                <th>
+                    Crew Comment
+                </th>
+                <th>
+                    Character Score
+                </th>
+                <th>
+                    Working Experience
+                </th>
+                <th>
+                    Motivation
+                </th>
+                <th>
+                    SMS Compliance
+                </th>
+                <th>
+                    Team Work
+                </th>
+                <th>
+                    Communication
+                </th>
+                <th>
+                    Decision Making
+                </th>
+                <th>
+                    Managerial Skill
+                </th>
+                <th>
+                    Potential Career Development
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.CrewEvaluationDetails.Count > 0)
+            {
+                foreach (var item in Model.CrewEvaluationDetails)
+                {
+                    <tr>
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => item.crewname)
+                        </td>
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => item.crewrank)
+                        </td>
+                        <td style="width:25%">
+                            <div>
+                                @Html.TextAreaFor(modelItem => item.crewcomment, 2, 10, htmlAttributes: new { @class = "form-control toggle-comments", @readonly = "readonly" })
+                            </div>
+                        </td>
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => item.characterscore)
+                        </td>
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => item.workingexperience)
+                        </td>
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => item.motivation)
+                        </td>
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => item.smscompliance)
+                        </td>
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => item.teamwork)
+                        </td>
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => item.communication)
+                        </td>
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => item.decisionmaking)
+                        </td>
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => item.managerialskill)
+                        </td>
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => item.potentialcareerdevelopment)
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="12" class="noRecord">
+                        No Records found.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<br />

@@ -1,0 +1,155 @@
+﻿@page
+@model Attendance.Pages.VettingInfo.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<div class="container-fluid">
+<h1>Edit</h1>
+
+<h4>VettingInfo</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="VettingInfo.VetId" />
+            <div class="form-group">
+                <label asp-for="VettingInfo.InspectorName" class="control-label"></label>
+                <input asp-for="VettingInfo.InspectorName" class="form-control" />
+                <span asp-validation-for="VettingInfo.InspectorName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.InspectorSirName" class="control-label"></label>
+                <input asp-for="VettingInfo.InspectorSirName" class="form-control" />
+                <span asp-validation-for="VettingInfo.InspectorSirName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.Port" class="control-label"></label>
+                <input asp-for="VettingInfo.Port" class="form-control" />
+                <span asp-validation-for="VettingInfo.Port" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.Country" class="control-label"></label>
+                <input asp-for="VettingInfo.Country" class="form-control" />
+                <span asp-validation-for="VettingInfo.Country" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.VetDate" class="control-label"></label>
+                <input asp-for="VettingInfo.VetDate" class="form-control" />
+                <span asp-validation-for="VettingInfo.VetDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.VetTime" class="control-label"></label>
+                <input asp-for="VettingInfo.VetTime" class="form-control" />
+                <span asp-validation-for="VettingInfo.VetTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.Password" class="control-label"></label>
+                <input asp-for="VettingInfo.Password" class="form-control" />
+                <span asp-validation-for="VettingInfo.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.Comments" class="control-label"></label>
+                <input asp-for="VettingInfo.Comments" class="form-control" />
+                <span asp-validation-for="VettingInfo.Comments" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.VesselName" class="control-label"></label>
+                <input asp-for="VettingInfo.VesselName" class="form-control" />
+                <span asp-validation-for="VettingInfo.VesselName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.VettingCode" class="control-label"></label>
+                <input asp-for="VettingInfo.VettingCode" class="form-control" />
+                <span asp-validation-for="VettingInfo.VettingCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.QId" class="control-label"></label>
+                <input asp-for="VettingInfo.QId" class="form-control" />
+                <span asp-validation-for="VettingInfo.QId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.VetGUI" class="control-label"></label>
+                <input asp-for="VettingInfo.VetGUI" class="form-control" />
+                <span asp-validation-for="VettingInfo.VetGUI" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.InspectionTypeId" class="control-label"></label>
+                <input asp-for="VettingInfo.InspectionTypeId" class="form-control" />
+                <span asp-validation-for="VettingInfo.InspectionTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.VesselId" class="control-label"></label>
+                <input asp-for="VettingInfo.VesselId" class="form-control" />
+                <span asp-validation-for="VettingInfo.VesselId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.CountryId" class="control-label"></label>
+                <input asp-for="VettingInfo.CountryId" class="form-control" />
+                <span asp-validation-for="VettingInfo.CountryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.PortId" class="control-label"></label>
+                <input asp-for="VettingInfo.PortId" class="form-control" />
+                <span asp-validation-for="VettingInfo.PortId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.CompanyRepresentativeName" class="control-label"></label>
+                <input asp-for="VettingInfo.CompanyRepresentativeName" class="form-control" />
+                <span asp-validation-for="VettingInfo.CompanyRepresentativeName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.RegistrationDate" class="control-label"></label>
+                <input asp-for="VettingInfo.RegistrationDate" class="form-control" />
+                <span asp-validation-for="VettingInfo.RegistrationDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.MajorId" class="control-label"></label>
+                <input asp-for="VettingInfo.MajorId" class="form-control" />
+                <span asp-validation-for="VettingInfo.MajorId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.RegisterName" class="control-label"></label>
+                <input asp-for="VettingInfo.RegisterName" class="form-control" />
+                <span asp-validation-for="VettingInfo.RegisterName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.Answered" class="control-label"></label>
+                <input asp-for="VettingInfo.Answered" class="form-control" />
+                <span asp-validation-for="VettingInfo.Answered" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.Negative" class="control-label"></label>
+                <input asp-for="VettingInfo.Negative" class="form-control" />
+                <span asp-validation-for="VettingInfo.Negative" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.Positive" class="control-label"></label>
+                <input asp-for="VettingInfo.Positive" class="form-control" />
+                <span asp-validation-for="VettingInfo.Positive" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.SourceId" class="control-label"></label>
+                <input asp-for="VettingInfo.SourceId" class="form-control" />
+                <span asp-validation-for="VettingInfo.SourceId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VettingInfo.UserId" class="control-label"></label>
+                <input asp-for="VettingInfo.UserId" class="form-control" />
+                <span asp-validation-for="VettingInfo.UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

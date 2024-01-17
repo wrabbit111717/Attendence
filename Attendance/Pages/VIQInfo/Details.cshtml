@@ -1,0 +1,97 @@
+﻿@page
+@model Attendance.Pages.VIQInfo.DetailsModel
+
+@{
+    ViewData["Title"] = "VIQInfo";
+    ViewData["Menu"] = "viqinfo";
+}
+<div class="container-fluid">
+<h1>Details</h1>
+
+<div>
+    <h4>VIQInfoModel</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-6" style="border-right: solid 1px gray;">
+            <dl class="row">
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.VIQInfoModel.Title)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.VIQInfoModel.Title)
+                </dd>
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.VIQInfoModel.Author)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.VIQInfoModel.Author)
+                </dd>
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.VIQInfoModel.RegistrationDate)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.VIQInfoModel.RegistrationDate)
+                </dd>
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.VIQInfoModel.NumOfQuestions)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.VIQInfoModel.NumOfQuestions)
+                </dd>
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.VIQInfoModel.Comments)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.VIQInfoModel.Comments)
+                </dd>
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.VIQInfoModel.version)
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.VIQInfoModel.version)
+                </dd>
+            </dl>
+            <div>
+                <a asp-page="./Edit" asp-route-id="@Model.VIQInfoModel.QId" asp-route-pageIndex="@(Model.PageIndex)">Edit</a> |
+                <a asp-page="./Index" asp-route-pageIndex="@(Model.PageIndex)">Back to List</a>
+            </div>
+        </div>   
+        <div class="col-md-6">
+            <div class="tableFixHead">
+                @*Categories and Questions*@
+                <table class="table detailTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                Code
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Type
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.VIQDetail)
+                        {
+                            <tr class="sel">
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.Code)
+                                </td>
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.Description)
+                                </td>
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.Type)
+                                </td>                               
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

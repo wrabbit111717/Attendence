@@ -1,0 +1,498 @@
+﻿@page
+@model Attendance.Pages.VettingInfo.DetailsModel
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Details";
+}
+<style>
+    .observation-assign-sec {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+    .assignLink, .observation-attachment, .observation-verified {
+        padding-left: 20px;
+    }
+    .assignLink {
+        width: 89px;
+    }
+    .observation-description {
+        display: list-item;
+        width: 72%;
+    }
+    .observation-attachment {
+        width: 145px;
+    }
+</style>
+<div class="row justify-content-center align-items-center">
+    @if (TempData["message"] != null)
+    {
+        var alertType = "alert-info";
+
+        switch (Model.AlertType)
+        {
+            case Data.PageAlertType.Info:
+                alertType = "alert-info";
+                break;
+            case Data.PageAlertType.Success:
+                alertType = "alert-success";
+                break;
+            case Data.PageAlertType.Warning:
+                alertType = "alert-warning";
+                break;
+            case Data.PageAlertType.Danger:
+                alertType = "alert-danger";
+                break;
+            case Data.PageAlertType.Primary:
+                alertType = "alert-primary";
+                break;
+        }
+        <div class="alert @alertType mb-0" algin="center">
+            <strong>@TempData["result"]</strong> @TempData["message"]
+        </div>
+    }
+</div>
+<div>
+
+    <div class="container">
+        <div class="d-flex justify-content-between my-2">
+            <h2>Inspection Code @Html.DisplayFor(model => model.VettingInfoDetail.VetId)</h2>
+            <a asp-page="./Index">Back to List</a>
+        </div>
+        <form asp-page-handler="edit" method="post">
+            <table class="mx-auto table table-sm table-bordered table-fixed" style="table-layout: fixed">
+                <tbody>
+                    <tr><th>Vessel Name</th><td>@Html.DisplayFor(model => model.VettingInfoDetail.VesselName)</td><th>Inspector</th><td>@Html.DisplayFor(model => model.VettingInfoDetail.InspectorName)</td></tr>
+                    <tr><th>Country</th><td>@Html.DisplayFor(model => model.VettingInfoDetail.Country)</td><th>Vet Date</th><td>@Html.DisplayFor(model => model.VettingInfoDetail.VetShortDate)</td></tr>
+                    <tr><th>Type</th><td>@Html.DisplayFor(model => model.VettingInfoDetail.InspectionTypeName)</td><th>Major</th><td>@Html.DisplayFor(model => model.VettingInfoDetail.Major)</td></tr>
+                    <tr><th>Port</th><td>@Html.DisplayFor(model => model.VettingInfoDetail.Port)</td><th>Negative</th><td>@Html.DisplayFor(model => model.VettingInfoDetail.Negative)</td></tr>
+                    <tr><th>Positive</th><td>@Html.DisplayFor(model => model.VettingInfoDetail.Positive)</td><th>Company Representative</th><td>@Html.DisplayFor(model => model.VettingInfoDetail.CompanyRepresentativeName)</td></tr>
+                    <tr>
+                        <th>Carried Out Status</th>
+                        <td>
+                            <select class="form-control form-control-sm w-100" asp-for=" @Model.VettingInfoDetail.CarriedOutStatus" asp-items="Model.CarriedOutStatusList">
+                                <option value="-1">Choose Carried Out Status</option>
+                            </select>
+                        </td>
+                        <th>Status</th>
+                        <td>
+                            <select class="form-control form-control-sm w-100" asp-for="@Model.VettingInfoDetail.Status" asp-items="Model.StatusList">
+                                <option value="-1">Choose Status</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr><th>General Comment</th><td colspan="3">@Html.TextAreaFor(model => model.VettingInfoDetail.Comments, 2, 20, htmlAttributes: new { @class = "form-control width-textarea" })</td></tr>
+                </tbody>
+            </table>
+            <input type="hidden" name="vetId" value="@Model.VettingInfo.VetId" />
+            <input type="hidden" name="vesselName" value="@Model.VettingInfoDetail.VesselName" />
+            <input type="hidden" name="inspectorName" value="@Model.VettingInfoDetail.InspectorName" />
+            <input type="hidden" name="compRep" value="@Model.VettingInfoDetail.CompanyRepresentativeName" />
+            <input type="hidden" name="insCode" value="@Model.VettingInfoDetail.VettingCode" />
+            <input type="hidden" name="qId" value="@Model.VettingInfoDetail.QId" />
+            <input type="hidden" name="positiveFilter" id="positiveFilter" value="" />
+            <input type="hidden" name="negFilter" id="negFilter" value="" />
+            <input type="hidden" name="remarkFilter" id="remarkFilter" value="" />
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <button class="btn btn-primary min-width mr-3">Save</button>
+                <a href="@Url.PageLink("", "ExportToPdf", new {
+                        id = Model.Id,
+                        qid = Model.Qid,
+                        pageNumber = Model.PageNumber,
+                        positive = Model.Positive,
+                        negative = Model.Negative,
+                        remark = Model.Remark })" class="btn btn-link min-width">
+                    Export PDF
+                </a>
+                <a href="@Url.PageLink("", "ExportToExcel", new {
+                        id = Model.Id,
+                        qid = Model.Qid,
+                        pageNumber = Model.PageNumber,
+                        positive = Model.Positive,
+                        negative = Model.Negative,
+                        remark = Model.Remark })" class="btn btn-link min-width">
+                    Export Excel
+                </a>
+
+                @{
+                    var IsMasterRole = User.Claims.LastOrDefault(c => string.Equals(c.Type, "IsMasterRole", StringComparison.InvariantCultureIgnoreCase))?.Value;
+                    if (!string.IsNullOrEmpty(IsMasterRole))
+                    {
+                        if (IsMasterRole == "1" && Model.VettingInfoDetail.IsCrawEvaluation)
+                        {
+                            <a class="btn btn-link min-width" asp-page="./CrewEvaluation" asp-route-id="@Model.VettingInfo.VetId">
+                                Crew Evaluation
+                            </a>
+                        }
+                    }
+                }
+            </div>
+        </form>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mt-3 sticky-top">
+        <div class="navbar-brand" href="#">Apply Filters</div>
+        <div class="form-check form-check-inline">
+            @Html.CheckBoxFor(model => model.Negative, htmlAttributes: new { @class = "form-check-input", @id = "Negative" })
+            <label class="form-check-label" for="Negative">Negative</label>
+        </div>
+        <div class="form-check form-check-inline">
+            @Html.CheckBoxFor(model => model.Positive, htmlAttributes: new { @class = "form-check-input", @id = "Positive" })
+            <label class="form-check-label" for="Positive">Positive</label>
+        </div>
+        <div class="form-check form-check-inline">
+            @Html.CheckBoxFor(model => model.Remark, htmlAttributes: new { @class = "form-check-input", @id = "Remark" })
+            <label class="form-check-label" for="Remark">Remark</label>
+        </div>
+        <div class="form-check form-check-inline">
+            @Html.CheckBoxFor(model => model.QuestionComments, htmlAttributes: new { @class = "form-check-input", @id = "OpenDetail" })
+            <label class="form-check-label" for="OpenDetail">Question Comments</label>
+        </div>
+        <div class="form-check form-check-inline">
+            @Html.CheckBoxFor(model => model.AnswerComments, htmlAttributes: new { @class = "form-check-input", @id = "OpenComments" })
+            <label class="form-check-label" for="OpenComments">Answered Comments</label>
+        </div>
+        <div>
+            <select asp-for="Qid" id="SelectQid" class="form-control form-control-sm" asp-items="Model.QidList">
+                <option value="">Filter by Questionnaire</option>
+            </select>
+        </div>
+
+        @if (@Model.attendanceDetail.TotalPages.HasValue && @Model.attendanceDetail.TotalPages > 1)
+        {
+            <ul class="pagination ml-auto my-0">
+                <li class="page-item  @(@Model.attendanceDetail.PageNumber <= 1 ? "disabled" : "")">
+                    <a data-page="1" class="page-link" href="#" aria-label="First page" title="First page">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <li class="page-item  @(@Model.attendanceDetail.PageNumber <= 1 ? "disabled" : "")">
+                    <a data-page="@(Model.attendanceDetail.PageNumber - 1)" class="page-link" href="#" aria-label="Previous" title="Previous page">
+                        <span aria-hidden="true">&lsaquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <li class="page-item active disabled"><a class="page-link" href="#">@Model.attendanceDetail.PageNumber / @Model.attendanceDetail.TotalPages</a></li>
+                <li class="page-item  @(@Model.attendanceDetail.PageNumber + 1 > @Model.attendanceDetail.TotalPages ? "disabled" : "")">
+                    <a data-page="@(Model.attendanceDetail.PageNumber + 1)" class="page-link" href="#" aria-label="Next page" title="Next page">
+                        <span aria-hidden="true">&rsaquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+                <li class="page-item @(@Model.attendanceDetail.PageNumber >= @Model.attendanceDetail.TotalPages ? "disabled" : "")">
+                    <a data-page="@Model.attendanceDetail.TotalPages" class="page-link" href="#" aria-label="Last page" title="Last page">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        }
+
+    </nav>
+    <div id="VetInfoDetailTable">
+        <table class="table" id="VetInfoDetail">
+            <thead>
+                <tr class="sticky-top bg-light border-bottom" style="top: 50px">
+                    <th>DisplayCode</th>
+                    <th class="no_export">DefaultCode</th>
+                    <th>Category/Question</th>
+                    <th style="width:55%">Observations</th>
+                    <th>Assignee</th>
+                    <th>Attchements</th>
+                    <th>Verified</th>
+                    <th>Answer</th>
+                    <th class="no_export">Significance</th>
+                    <th class="no_export">Attachments</th>
+                </tr>
+            </thead>
+            <tbody id="VetInfoDetailBody">
+                @for (int i = 0; i < Model.attendanceDetail.Data.Count; i++)
+                {
+                    <tr class="sel">
+                        <td style="width:5%">
+                            @Html.DisplayFor(modelItem => Model.attendanceDetail.Data[i].DisplayCode)
+                        </td>
+                        <td style="width:5%" class="no_export">
+                            @Html.DisplayFor(modelItem => Model.attendanceDetail.Data[i].DefaultCode)
+                        </td>
+                        <td style="width:35%" class="parent">
+                            @Html.DisplayFor(modelItem => Model.attendanceDetail.Data[i].CategoryQuestion)
+                            <table cellspacing="0" cellpadding="0" id="QuestionDetail" class="table table-sm submenu no_export border-0 @(Model.QuestionComments ? "" : "d-none")">
+                                <tbody>
+                                    <tr class="border-0">
+                                        <th class="px-0 border-0">
+                                            Comments:
+                                        </th>
+                                    </tr>
+                                    <tr class="border-0">
+                                        <td class="px-0 border-0">
+                                            @Html.DisplayFor(modelItem => Model.attendanceDetail.Data[i].CategoryQuestionComment)
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td style="width:35%;" colspan="4">
+                            @{
+                                var observation2SireList = Model.VettingInfoDetail.listObservationsSire2.Where(p => p.qid == Model.attendanceDetail.Data[i].qid && p.objectid == Model.attendanceDetail.Data[i].ObjectId)?.ToList();
+
+                                foreach (var itemSire in observation2SireList)
+                                {
+                                    if (itemSire != null)
+                                    {
+                                        <div class="observation-assign-sec">
+                                            <div class="observation-description">
+                                                @Html.DisplayFor(modelItem => itemSire.obs_text_full)
+                                                <a asp-page="../Observation/Details" 
+                                                    asp-route-id="@itemSire.id"
+                                                >details</a>
+
+                                            </div>
+                                            <div class="assignLink">
+                                                @{
+                                                    var observationAssignee = Model.VettingInfoDetail.listObservationsSire2Assignees.Where(p => p.obs_id == itemSire.id)?.FirstOrDefault();
+                                                    if (observationAssignee != null)
+                                                    {
+                                                        <a asp-page="../Observation/Assignee" asp-route-observationId="@observationAssignee.obs_id" asp-route-pageNumber="@Model.attendanceDetail.PageNumber">Assignees</a>
+                                                    }
+                                                }
+                                            </div>
+                                            <div class="observation-attachment">
+                                                @{
+                                                    var observationAttachment = Model.VettingInfoDetail.listObservationsSire2Attachments.Where(p => p.obs_id == itemSire.id)?.FirstOrDefault();
+                                                    if (observationAttachment != null)
+                                                    {
+                                                        <a asp-page="./Attachment" asp-route-id="@observationAttachment.obs_id"
+                                                           asp-route-objectId="@observationAttachment.obs_id"
+                                                           asp-route-vesselName="@Model.VettingInfoDetail.VesselName"
+                                                           asp-route-inspecName="@Model.VettingInfoDetail.InspectorName"
+                                                           asp-route-compRep="@Model.VettingInfoDetail.CompanyRepresentativeName"
+                                                           asp-route-insCode="@Model.VettingInfoDetail.VettingCode"
+                                                           asp-route-isObservationAttchment="true"
+                                                           asp-route-VetId="@Model.VettingInfo.VetId">Attachments</a>
+                                                    }
+                                                }
+                                            </div>
+                                            <div class="observation-verified">
+                                                @Html.DisplayFor(modelItem => itemSire.verified)
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </td>
+                        <td style="width:5%">
+                            @{
+                                var answer = Model.attendanceDetail.Data[i].Answer == "1" ? "YES" : Model.attendanceDetail.Data[i].Answer == "2" ? "NO" : Model.attendanceDetail.Data[i].Answer == "3" ? "N/S" : Model.attendanceDetail.Data[i].Answer == "4" ? "N/A" : "";
+                                var significance = Model.attendanceDetail.Data[i].Significance == 0 ? "" : Model.attendanceDetail.Data[i].Significance.ToString();
+                                var significanceName = string.IsNullOrEmpty(Model.attendanceDetail.Data[i].SignificanceName) ? "" : Model.attendanceDetail.Data[i].SignificanceName.ToString();
+                            }
+                            @Html.DisplayFor(modelItem => answer)
+                        </td>
+                        <td style="width:5%" class="no_export">
+                            @Html.DisplayFor(modelItem => significanceName)
+                        </td>
+
+                        <td style="width:5%" class="no_export">
+                            <a asp-page="./Attachment" asp-route-id="@Model.VettingInfo.VetId"
+                               asp-route-objectId="@Model.attendanceDetail.Data[i].ObjectId"
+                               asp-route-vesselName="@Model.VettingInfoDetail.VesselName"
+                               asp-route-inspecName="@Model.VettingInfoDetail.InspectorName"
+                               asp-route-compRep="@Model.VettingInfoDetail.CompanyRepresentativeName"
+                               asp-route-insCode="@Model.VettingInfoDetail.VettingCode"
+                               asp-route-isObservationAttchment="false"
+                               asp-route-VetId="@Model.VettingInfo.VetId">Attachments</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        function toggleSubMenu() {
+            $(".parent").click(function (e) {
+                e.preventDefault();
+                // TODO
+                $(".submenu", this).toggle();
+            });
+        }
+
+        function replaceState(params, refresh) {
+            if (refresh) {
+                window.location.search = params.toString();
+            }
+            else {
+                var newRelativePathQuery = window.location.pathname + '?' + params.toString();
+                history.replaceState(null, '', newRelativePathQuery);
+            }
+        }
+
+        function filter(props, refresh = true) {
+            if (refresh) waitingDialog.show('Please wait...', { progressType: 'success' });
+            var searchParams = new URLSearchParams(window.location.search);
+            for (const [key, value] of Object.entries(props)) {
+                if (value == null) {
+                    if (searchParams.has(key)) searchParams.delete(key);
+                    continue;
+                }
+                searchParams.set(key, value);
+            }
+            replaceState(searchParams, refresh);
+        }
+
+        function initPagination() {
+            const searchParams = new URLSearchParams(window.location.search);
+            const currentPage = "@(Model.attendanceDetail.PageNumber)";
+            if (searchParams.has("pageNumber") && currentPage !== searchParams.get("pageNumber")) {
+                searchParams.delete("pageNumber");
+                replaceState(searchParams, false);
+            }
+            $("a[data-page]").each(function () {
+                const $elem = $(this);
+                const nextPage = parseInt($elem.attr("data-page"));
+                searchParams.set("pageNumber", $elem.attr("data-page"));
+                const newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
+                $elem.attr("href", newRelativePathQuery);
+                $elem.on("click", function () {
+                    waitingDialog.show('Please wait...', { progressType: 'success' });
+                })
+            })
+        }
+        $(function () {
+            toggleSubMenu();
+            initPagination();
+        });
+
+        $("#Negative").on("change", function () {
+            filter({
+                pageNumber: 1,
+                negative: this.checked
+            })
+        })
+        $("#Positive").on("change", function () {
+            filter({
+                pageNumber: 1,
+                positive: this.checked
+            })
+        })
+        $("#Remark").on("change", function () {
+            filter({
+                pageNumber: 1,
+                remark: this.checked
+            })
+        })
+        $("#SelectQid").on("change", function () {
+            filter({
+                pageNumber: 1,
+                qid: this.value || null
+            })
+        });
+
+        $("#OpenDetail").click(function () {
+            const target = $(this)
+            const checked = this.checked;
+            if (checked) $(".submenu").removeClass("d-none");
+            else $(".submenu").addClass("d-none");
+            filter({
+                questionComments: checked
+            }, false);
+        });
+
+        $("#OpenComments").click(function () {
+            const target = $(this)
+            const checked = this.checked;
+            filter({
+                answerComments: checked
+            }, false);
+            if (!checked) {
+                $(".toggle-comments").attr("rows", 1);
+                return;
+            }
+            $(".toggle-comments").each(function (index) {
+                const $textarea = $(this);
+                const isEmpty = !$textarea.val().trim().length;
+                if (!isEmpty) {
+                    $textarea.attr("rows", 10);
+                }
+            })
+        });
+
+        $(".toggle-comments").on("focus blur", function (e) {
+            const $textarea = $(this);
+            const isEmpty = !$textarea.val().trim().length;
+            if (isEmpty) return;
+            const isChecked = $("#OpenComments")[0].checked;
+            if (isChecked) return;
+            if (e.type === "focus" || e.type === "focusin") {
+                $textarea.attr("rows", 10);
+            }
+            else if (e.type === "blur" || e.type === "focusout") {
+                $textarea.attr("rows", 1);
+            }
+        })
+
+    </script>
+    <script>
+        function exportPdfFromHTML() {
+            var pdf = new jsPDF('p', 'pt', 'letter');
+            source = $('#VetInfoDetailTable')[0];
+            cln_source2 = source.cloneNode(true);
+            var deleterows = [];
+            $(cln_source2.childNodes[1].rows).each(function (ri, row) {
+                var deletecells = [];
+                $(row.cells).each(function (ci, cell) {
+                    if ($(cell).hasClass('no_export'))
+                        deletecells.push(ci);
+                    if ($(cell).find('.submenu').hasClass('no_export'))
+                        $(cell).find('.submenu').remove();
+                });
+                $.each(deletecells.reverse(), function (i, ii) {
+                    //console.log(ii);
+                    row.deleteCell(ii);
+                });
+                if ($(row).hasClass('omitted-row'))
+                    deleterows.push(ri);
+
+            });
+            $.each(deleterows.reverse(), function (i, ii) {
+                cln_source2.childNodes[1].deleteRow(ii);
+            });
+            specialElementHandlers = {
+                '#ignorePDF': function (element, renderer) {
+                    return true
+                }
+            };
+            margins = {
+                top: 20,
+                bottom: 30,
+                left: 20,
+                width: 700
+            };
+
+            pdf.fromHTML(
+                cln_source2, // HTML string or DOM elem ref.
+                margins.left, // x coord
+                margins.top, { // y coord
+                'width': margins.width, // max width of content on PDF
+                'elementHandlers': specialElementHandlers
+            },
+                function (dispose) {
+                    pdf.save('AttendanceDetail.pdf');
+                }, margins);
+            //var pageHeight = pdf.internal.pageSize.height || pdf.internal.pageSize.getHeight();
+            //var pageWidth = pdf.internal.pageSize.width || pdf.internal.pageSize.getWidth();
+            //pdf.setFontSize(10);
+            //pdf.text(15, 10, $('#VetInfoDetailBody').text().trim(), { maxWidth: 10});
+            //pdf.save('AttendanceDetail.pdf');
+
+        }
+    </script>
+}
+
+
+

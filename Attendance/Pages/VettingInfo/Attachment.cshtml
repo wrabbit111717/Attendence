@@ -1,0 +1,225 @@
+﻿@page
+@model Attendance.Pages.VettingInfo.AttachmentModel
+@{
+    ViewData["Title"] = "Attachments";
+    ViewData["Menu"] = "Attachments";
+}
+
+
+<head>
+    <link href="~/css/attachment.css" rel="stylesheet" />
+    <link href="~/css/slider.css" rel="stylesheet" />
+    <script src="~/js/slider.js"></script>
+</head>
+
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center">
+        @if (TempData["message"] != null)
+        {
+            var alertType = "alert-info";
+
+            switch (Model.AlertType)
+            {
+                case Data.PageAlertType.Info:
+                    alertType = "alert-info";
+                    break;
+                case Data.PageAlertType.Success:
+                    alertType = "alert-success";
+                    break;
+                case Data.PageAlertType.Warning:
+                    alertType = "alert-warning";
+                    break;
+                case Data.PageAlertType.Danger:
+                    alertType = "alert-danger";
+                    break;
+                case Data.PageAlertType.Primary:
+                    alertType = "alert-primary";
+                    break;
+            }
+            <div class="alert @alertType mb-0" algin="center">
+                <strong>@TempData["result"]</strong> @TempData["message"]
+            </div>
+        }
+    </div>
+
+    <h1>Attachments</h1>
+    <div class="col-sm-12">
+        <div class="row d-flex">
+            <form method="post" enctype="multipart/form-data" asp-action="extract">
+                @if (Model.VettingInfoDetail.IsObservationAttchment)
+                {
+                    <p>
+                        @if (Model.observationsSire2Attachments.Count > 0)
+                        {
+                            <input type="hidden" name="obsId" value="@Model.observationsSire2Attachments[0].obs_id" />
+                            <input asp-page-handler="ObservationDownloadAll" class="btn btn-primary min-width" type="submit" value="Download All" />    
+                        }
+                    </p>
+                }
+                else
+                {
+                    <p>
+                        If you want to add new attachment please upload =>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" name="vetId" value="@Model.Vetting.VETId" />
+                        <input type="hidden" name="objectId" value="@Model.Vetting.ObjectId" />
+                        <input type="hidden" name="vesselName" value="@Model.VettingInfoDetail.VesselName" />
+                        <input type="hidden" name="inspectorName" value="@Model.VettingInfoDetail.InspectorName" />
+                        <input type="hidden" name="compRep" value="@Model.VettingInfoDetail.CompanyRepresentativeName" />
+                        <input type="hidden" name="insCode" value="@Model.VettingInfoDetail.VettingCode" />
+                        <input type="hidden" name="isObservationAttchment" value="@Model.VettingInfoDetail.IsObservationAttchment" />
+                        <input asp-for="FileUpload.CommentFile" type="file" multiple="multiple">
+                        <input asp-page-handler="Upload" class="btn btn-primary min-width" type="submit" value="Upload" />
+                        @if (Model.vettingAttachments.Count > 0)
+                        {
+                            <input asp-page-handler="DownloadAll" class="btn btn-primary min-width" type="submit" value="Download All" />
+                        }
+                    </p>
+                }
+            </form>
+        </div>
+    </div>
+    <div>
+        <br />
+
+        @if (Model.VettingInfoDetail.IsObservationAttchment)
+        {
+            if (Model.observationsSire2Attachments != null && Model.observationsSire2Attachments.Count > 0)
+            {
+                <div id="AttandanceImgSlider" class="carousel slide" data-interval="false">
+
+                    <!-- Indicators/dots -->
+                    <div class="carousel-indicators">
+                        @for (int i = 0; i < Model.observationsSire2Attachments.Count; i++)
+                        {
+                            if (i == 0)
+                            {
+                                <button type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide-to="@i" class="active"></button>
+                            }
+                            else
+                            {
+                                <button type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide-to="@i"></button>
+                            }
+                        }
+                    </div>
+
+                    <div class="carousel-inner">
+                        @{
+                            bool isfirst = true;
+                            foreach (var img in Model.observationsSire2Attachments)
+                            {
+                                if (img.attachment != null)
+                                {
+                                    string imageBase64 = Convert.ToBase64String(img.attachment);
+                                    string imageSrc = string.Format("data:image/gif;base64,{0}", imageBase64);
+                                    <div class="@(isfirst ? "carousel-item active" : "carousel-item")">
+
+                                        <img src="@imageSrc" alt="@img.attachment_name" class="img-fluid" style="width:100%;">
+
+                                        <form method="post" enctype="multipart/form-data" asp-action="extract">
+                                            <div class="carousel-caption">
+                                                <input type="hidden" name="obs_id" value="@img.obs_id" />
+                                                <input type="hidden" name="id" value="@img.id" />
+                                                <input type="hidden" name="isObservationAttchment" value="@Model.VettingInfoDetail.IsObservationAttchment" />
+
+
+                                                <input type="hidden" name="vetId" value="@Model.VettingInfoDetail.VetId" />
+                                                <input type="hidden" name="objectId" value="@Guid.NewGuid()" />
+                                                <input type="hidden" name="vesselName" value="@Model.VettingInfoDetail.VesselName" />
+                                                <input type="hidden" name="inspectorName" value="@Model.VettingInfoDetail.InspectorName" />
+                                                <input type="hidden" name="compRep" value="@Model.VettingInfoDetail.CompanyRepresentativeName" />
+                                                <input type="hidden" name="insCode" value="@Model.VettingInfoDetail.VettingCode" />
+                                                <input type="hidden" name="isObservationAttchment" value="@Model.VettingInfoDetail.IsObservationAttchment" />
+
+                                                <input asp-page-handler="ObservationDownload" class="btn btn-primary min-width" type="submit" value="Download">
+                                                <input asp-page-handler="ObservationDelete" class="btn btn-primary min-width" type="submit" value="Delete">
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    isfirst = false;
+                                }
+                            }
+                        }
+                    </div>
+
+                    <!-- The slideshow/carousel -->
+                    <!-- Left and right controls/icons -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+            }
+        }
+        else
+        {
+            @if (Model.Vetting != null && Model.Vetting.VettingAttachments.Count > 0)
+            {
+                <div id="AttandanceImgSlider" class="carousel slide" data-interval="false">
+
+                    <!-- Indicators/dots -->
+                    <div class="carousel-indicators">
+                        @for (int i = 0; i < Model.Vetting.VettingAttachments.Count; i++)
+                        {
+                            if (i == 0)
+                            {
+                                <button type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide-to="@i" class="active"></button>
+                            }
+                            else
+                            {
+                                <button type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide-to="@i"></button>
+                            }
+                        }
+                    </div>
+
+                    <div class="carousel-inner">
+                        @{
+                            bool isfirst = true;
+                            foreach (var img in Model.Vetting.VettingAttachments)
+                            {
+                                if (img.commentFile != null)
+                                {
+                                    string imageBase64 = Convert.ToBase64String(img.commentFile);
+                                    string imageSrc = string.Format("data:image/gif;base64,{0}", imageBase64);
+                                    <div class="@(isfirst ? "carousel-item active" : "carousel-item")">
+
+                                        <img src="@imageSrc" alt="@img.commentFileName" class="img-fluid" style="width:100%;">
+
+                                        <form method="post" enctype="multipart/form-data" asp-action="extract">
+                                            <div class="carousel-caption">
+                                                <input type="hidden" name="vetId" value="@img.VETId" />
+                                                <input type="hidden" name="objectId" value="@img.ObjectId" />
+                                                <input type="hidden" name="id" value="@img.Id" />
+                                                <input type="hidden" name="vesselName" value="@Model.VettingInfoDetail.VesselName" />
+                                                <input type="hidden" name="inspectorName" value="@Model.VettingInfoDetail.InspectorName" />
+                                                <input type="hidden" name="compRep" value="@Model.VettingInfoDetail.CompanyRepresentativeName" />
+                                                <input type="hidden" name="insCode" value="@Model.VettingInfoDetail.VettingCode" />
+                                                <input type="hidden" name="isObservationAttchment" value="@Model.VettingInfoDetail.IsObservationAttchment" />
+                                                <input asp-page-handler="Download" class="btn btn-primary min-width" type="submit" value="Download">
+                                                <input asp-page-handler="Delete" class="btn btn-primary min-width" type="submit" value="Delete">
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    isfirst = false;
+                                }
+                            }
+                        }
+                    </div>
+
+                    <!-- The slideshow/carousel -->
+                    <!-- Left and right controls/icons -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#AttandanceImgSlider" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+            }
+        }
+    </div>
+</div>

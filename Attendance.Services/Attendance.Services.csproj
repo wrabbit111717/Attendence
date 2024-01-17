@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ActiveDirectory\ActiveDirectory.csproj" />
+    <ProjectReference Include="..\Attendance.Infrastructure\Attendance.Infrastructure.csproj" />
+    <ProjectReference Include="..\Attendance.Models\Attendance.Models.csproj" />
+    <ProjectReference Include="..\Operations.Data\Operations.Data.csproj" />
+    <ProjectReference Include="..\Operations.Models\Operations.Models.csproj" />
+  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="System.Data.SqlServerCe">
+			<HintPath>System.Data.SqlServerCe.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<!--<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />-->
+		<PackageReference Include="AutoMapper" Version="10.1.1" />
+		<PackageReference Include="ClosedXML" Version="0.102.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.32" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.32" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.32" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="3.1.32" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Core" Version="3.1.32" />
+	</ItemGroup>
+
+
+  <!--<ItemGroup>
+    <Compile Update="AppResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AppResource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="AppResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>-->
+
+</Project>

@@ -1,0 +1,385 @@
+﻿@page
+@model Attendance.Pages.Overview.IndexModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Overview";
+    ViewData["Menu"] = "overview";
+    ViewData["Step"] = "Home";
+}
+
+@*<br/>
+    <h2>Overview</h2>*@
+<div class="row justify-content-center align-items-center">
+    @if (TempData["message"] != null)
+    {
+        var alertType = "alert-info";
+
+        switch (Model.AlertType)
+        {
+            case Data.PageAlertType.Info:
+                alertType = "alert-info";
+                break;
+            case Data.PageAlertType.Success:
+                alertType = "alert-success";
+                break;
+            case Data.PageAlertType.Warning:
+                alertType = "alert-warning";
+                break;
+            case Data.PageAlertType.Danger:
+                alertType = "alert-danger";
+                break;
+            case Data.PageAlertType.Primary:
+                alertType = "alert-primary";
+                break;
+        }
+        <div class="alert @alertType mb-0" algin="center">
+            <strong>@TempData["result"]</strong> @TempData["message"]
+        </div>
+    }
+</div>
+<div class="row p-3">
+    <div class="col-sm-2">
+        <div class="row px-3 d-flex justify-content-between">
+            <div>
+                <h5>Question Type</h5>
+            </div>
+        </div>
+        @*<partial name="_DisplayCategoryPartial" />*@
+        <form asp-page="./Index" method="get" id="formType">
+            <input type="hidden" name="typeID" id="typeID" value="" />
+            <input type="hidden" name="pageIndex" value="@Model.Category.PageIndex" />
+            <input type="hidden" name="currentFilterCategory" value="@Model.CurrentFilterCategory" />
+            <input type="hidden" name="selectedCategoryNewID" id="selectedCategoryNewID" value="@Model.SelectedCategoryNewID" />
+            <div class="table-responsive">
+                <table class="table" border="1">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.QuestionType[0].TypeCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.QuestionType[0].TypeDescription)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.QuestionType)
+                        {
+                            var className = @item.TypeId == @Model.SelectedTypeID ? "selected" : "sel";
+                            <tr class="@className" onclick="onSelectType('@item.TypeId')">
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.TypeCode)
+                                </td>
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.TypeDescription)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="col-sm-4">
+        <div class="row px-3 d-flex justify-content-between">
+            <div>
+                <h5>Categories</h5>
+            </div>
+            <form asp-page="./Index" method="get">
+                <div class="input-group">
+                    <input type="text" name="SearchCategory" value="@Model.CurrentFilterCategory" class="form-control" placeholder="Search...">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @*<partial name="_DisplayCategoryPartial" />*@
+        <form asp-page="./Index" method="get" id="formCategory">
+            <input type="hidden" name="pageIndex" value="@Model.Category.PageIndex" />
+            <input type="hidden" name="currentFilterCategory" value="@Model.CurrentFilterCategory" />
+            <input type="hidden" name="categoryNewID" id="categoryNewID" value="" />
+            <input type="hidden" name="selectedTypeID" id="selectedTypeID" value="@Model.SelectedTypeID" />
+
+            <div class="table-responsive">
+                <table class="table" border="1">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Category[0].CategoryCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Category[0].CategoryDescription)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Category)
+                        {
+                            var className = @item.CategoryNewID == @Model.SelectedCategoryNewID ? "selected" : "sel";
+                            <tr class="@className" onclick="onSelectCategory('@item.CategoryNewID')">
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.CategoryCode)
+                                </td>
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.CategoryDescription)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </form>
+        @{
+            var prevDisabled = !Model.Category.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.Category.HasNextPage ? "disabled" : "";
+        }
+
+        <a asp-page="./Index"
+           asp-route-pageIndex="@(Model.Category.PageIndex - 1)"
+           asp-route-qPageIndex="@(Model.QuestionPool.PageIndex)"
+           asp-route-currentFilterCategory="@Model.CurrentFilterCategory"
+           asp-route-currentFilterQuestionPool="@Model.CurrentFilterQuestionPool"
+           asp-route-selectedTypeID="@Model.SelectedTypeID"
+           class="btn btn-primary @prevDisabled">
+            Prev
+        </a>
+        <a asp-page="./Index"
+           asp-route-pageIndex="@(Model.Category.PageIndex + 1)"
+           asp-route-qPageIndex="@(Model.QuestionPool.PageIndex)"
+           asp-route-currentFilterCategory="@Model.CurrentFilterCategory"
+           asp-route-currentFilterQuestionPool="@Model.CurrentFilterQuestionPool"
+           asp-route-selectedTypeID="@Model.SelectedTypeID"
+           class="btn btn-primary @nextDisabled">
+            Next
+        </a>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="row px-3 d-flex justify-content-between">
+            <div>
+                <h5>Question Pool</h5>
+            </div>
+            <div class="row px-3">
+                @{
+                    var prevDisabled1 = !Model.QuestionPool.HasPreviousPage ? "disabled" : "";
+                    var nextDisabled1 = !Model.QuestionPool.HasNextPage ? "disabled" : "";
+                }
+
+                <div class="align-self-center mr-3">
+                    <a asp-page="/QuestionPool/Create"
+                       asp-route-categoryid="@(Model.SelectedCategoryNewID)"
+                       asp-route-pageIndex="@(Model.Category.PageIndex)"
+                       asp-route-currentFilterCategory="@(Model.CurrentFilterCategory)"
+                       asp-route-qTypeID="@(Model.SelectedTypeID)">Create New</a>
+                </div>
+
+                <a asp-page="./Index"
+                   asp-route-pageIndex="@(Model.Category.PageIndex)"
+                   asp-route-qPageIndex="@(Model.QuestionPool.PageIndex - 1)"
+                   asp-route-selectedCategoryNewID="@Model.SelectedCategoryNewID"
+                   asp-route-currentFilterCategory="@Model.CurrentFilterCategory"
+                   asp-route-currentFilterQuestionPool="@Model.CurrentFilterQuestionPool"
+                   asp-route-selectedTypeID="@Model.SelectedTypeID"
+                   class="align-self-center @prevDisabled1">
+                    <i class="fa fa-arrow-circle-left @prevDisabled1"></i>
+                </a>
+                <a asp-page="./Index"
+                   asp-route-pageIndex="@(Model.Category.PageIndex)"
+                   asp-route-qPageIndex="@(Model.QuestionPool.PageIndex + 1)"
+                   asp-route-selectedCategoryNewID="@Model.SelectedCategoryNewID"
+                   asp-route-currentFilterCategory="@Model.CurrentFilterCategory"
+                   asp-route-currentFilterQuestionPool="@Model.CurrentFilterQuestionPool"
+                   asp-route-selectedTypeID="@Model.SelectedTypeID"
+                   class="align-self-center ml-1 mr-3 @nextDisabled1">
+                    <i class="fa fa-arrow-circle-right @nextDisabled1"></i>
+                </a>
+
+                <form asp-page="./Index" method="get">
+                    <div class="input-group">
+                        <input type="hidden" name="pageIndex" value="@Model.Category.PageIndex" />
+                        <input type="text" name="SearchQuestionPool" value="@Model.CurrentFilterQuestionPool" class="form-control" placeholder="Search...">
+                        <input type="hidden" name="SelectedCategoryNewID" value="@Model.SelectedCategoryNewID" />
+                        <input type="hidden" name="selectedTypeID" value="@Model.SelectedTypeID" />
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" type="submit">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="collapse show" aria-expanded="true">
+            <div class="table-responsive">
+                <table class="table" border="1">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>
+                                QuestionCode
+                            </th>
+                            <th>
+                                Question
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.QuestionPool[0].CategoryID)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.QuestionPool[0].CategoryCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.QuestionPool[0].Origin)
+                            </th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.QuestionPool)
+                        {
+                            var unique = 'a' + item.questionid.ToString().Replace("-", string.Empty);
+                            <tr class="collapsed" data-toggle="collapse" data-target=".@unique">
+
+                                @if (item.Children == null || item.Children.Count == 0)
+                                {
+                                    <td class="app-td"></td>
+                                }
+                                else if (item.Children != null && item.Children.Count > 0)
+                                {
+                                    <td class="icon-class"></td>
+                                }
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.questioncode)
+                                </td>
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.question)
+                                </td>
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.CategoryID)
+                                </td>
+                                <td class="app-td">
+                                    @*@Html.DisplayFor(modelItem => item.CategoryCode)*@
+                                </td>
+                                <td class="app-td">
+                                    @Html.DisplayFor(modelItem => item.Origin)
+                                </td>
+                                <td class="app-td">
+                                    <a asp-page="/QuestionPool/Edit" asp-route-id="@item.questionid"
+                                       asp-route-categoryid="@(Model.SelectedCategoryNewID)"
+                                       asp-route-pageIndex="@(Model.Category.PageIndex)"
+                                       asp-route-currentFilterCategory="@(Model.CurrentFilterCategory)"
+                                       asp-route-qTypeID="@(Model.SelectedTypeID)">
+                                        <i class="material-icons">edit</i>
+                                    </a>
+                                </td>
+                                <td class="app-td">
+                                    <a asp-page-handler="Duplicate"
+                                       asp-route-id="@item.questionid"
+                                       asp-route-categoryid="@(Model.SelectedCategoryNewID)"
+                                       asp-route-pageIndex="@(Model.Category.PageIndex)"
+                                       asp-route-currentFilterCategory="@(Model.CurrentFilterCategory)"
+                                       asp-route-qTypeID="@(Model.SelectedTypeID)"
+                                       onclick="return confirm('Are you sure want to duplicate this item?');">
+                                        <i>duplicate</i>
+                                    </a>
+                                    <a asp-page-handler="Delete" style="color:red"
+                                       asp-route-id="@item.questionid"
+                                       asp-route-categoryid="@(Model.SelectedCategoryNewID)"
+                                       asp-route-pageIndex="@(Model.Category.PageIndex)"
+                                       asp-route-currentFilterCategory="@(Model.CurrentFilterCategory)"
+                                       asp-route-qTypeID="@(Model.SelectedTypeID)"
+                                       onclick="return confirm('Are you sure want to delete this item?');">
+                                        <i>delete</i>
+                                    </a>
+                                </td>
+                            </tr>
+                            if (item.Children != null && item.Children.Count > 0)
+                            {
+                                @foreach (var child in item.Children)
+                                {
+                                    <tr class="collapse @unique">
+                                        <td></td>
+                                        <td class="app-td" style="border: solid; border-color: #0056b3 ">
+                                            @Html.DisplayFor(modelItem => child.questioncode)
+                                        </td>
+                                        <td class="app-td" style="border: double; border-color: #0056b3 ">
+                                            @Html.DisplayFor(modelItem => child.question)
+                                        </td>
+                                        <td class="app-td" style="border: solid; border-color: #0056b3 ">
+                                            @Html.DisplayFor(modelItem => child.CategoryID)
+                                        </td>
+                                        <td class="app-td" style="border: double; border-color: #0056b3 ">
+                                            @*@Html.DisplayFor(modelItem => item.CategoryCode)*@
+                                        </td>
+                                        <td class="app-td" style="border: solid; border-color: #0056b3 ">
+                                            @Html.DisplayFor(modelItem => child.Origin)
+                                        </td>
+                                        <td class="app-td" style="border: double; border-color: #0056b3 ">
+                                            <a asp-page="/QuestionPool/Edit" asp-route-id="@child.questionid"
+                                               asp-route-categoryid="@(Model.SelectedCategoryNewID)"
+                                               asp-route-pageIndex="@(Model.Category.PageIndex)"
+                                               asp-route-currentFilterCategory="@(Model.CurrentFilterCategory)"
+                                               asp-route-qTypeID="@(Model.SelectedTypeID)">
+                                                <i class="material-icons">edit</i>
+                                            </a>
+                                        </td>
+                                        <td class="app-td" style="border: solid; border-color: #0056b3 ">
+                                            <a asp-page-handler="Duplicate"
+                                               asp-route-id="@child.questionid"
+                                               asp-route-fromChild="true"
+                                               asp-route-categoryid="@(Model.SelectedCategoryNewID)"
+                                               asp-route-pageIndex="@(Model.Category.PageIndex)"
+                                               asp-route-currentFilterCategory="@(Model.CurrentFilterCategory)"
+                                               asp-route-qTypeID="@(Model.SelectedTypeID)"
+                                               onclick="return confirm('Are you sure want to duplicate this item?');">
+                                                <i>duplicate</i>
+                                            </a>
+                                            <a asp-page-handler="Delete" style="color:red"
+                                               asp-route-id="@child.questionid"
+                                               asp-route-fromChild="true"
+                                               asp-route-categoryid="@(Model.SelectedCategoryNewID)"
+                                               asp-route-pageIndex="@(Model.Category.PageIndex)"
+                                               asp-route-currentFilterCategory="@(Model.CurrentFilterCategory)"
+                                               asp-route-qTypeID="@(Model.SelectedTypeID)"
+                                               onclick="return confirm('Are you sure want to delete this item?');">
+                                                <i>delete</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $('[data-toggle="collapse"]').on('click', function () {
+            $(".collapsed", this).toggle();
+        });
+        function onSelectCategory(categoryNewID) {
+            $("#categoryNewID").val(categoryNewID);
+            $("#formCategory").submit();
+        }
+
+        function onSelectType(typeID) {
+            $("#typeID").val(typeID);
+            $("#formType").submit();
+        }
+    </script>
+}
